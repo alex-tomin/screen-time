@@ -1,0 +1,62 @@
+time:
+  - platform: sntp
+    id: time_comp
+    on_time_sync:
+      then:
+        - script.execute: time_update
+
+globals:
+  - id: mario_step_count
+    type: int
+    restore_value: no
+    initial_value: '0'
+  # - id: pin_code
+  #   type: std::string
+  #   restore_value: yes
+  #   initial_value: '1611'
+  #   max_restore_data_length: 16
+
+interval:
+  - interval: 1min
+    then:
+      - script.execute: time_update 
+  - interval: 100ms
+    then:
+      - lambda: |-
+          auto offset = id(mario_step_count) = (id(mario_step_count) + 2) % 80;
+          lv_obj_set_style_translate_x(id(jumping_mario), offset, (int)LV_STATE_DEFAULT|(int)LV_PART_MAIN);
+  - interval: 100ms
+    then:
+      - lvgl.arc.update:
+          id: remaining_arc
+          value: !lambda 'return 100 - id(mario_step_count);'
+  - interval: 100ms
+    then:
+      - lvgl.slider.update:
+          id: daily_remaining_bar
+          value: !lambda 'return 100 - id(mario_step_count);'
+
+      
+      
+
+script:
+  - id: time_update
+    then:
+      if:
+        condition:
+          time.has_time:
+        then:        
+          - lvgl.label.update:
+              id: datetime_label
+              text:
+                format: "%s %2d  %02d:%02d"
+                args:
+                  - '(new const char *[12]{"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"})[id(time_comp).now().month-1]'
+                  - 'id(time_comp).now().day_of_month'
+                  - 'id(time_comp).now().hour'
+                  - 'id(time_comp).now().minute'
+wifi:
+  on_connect:
+    - lvgl.widget.show: wifi_label
+  on_disconnect:
+    - lvgl.widget.hide: wifi_label

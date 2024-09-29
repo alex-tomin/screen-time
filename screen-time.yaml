@@ -1,0 +1,104 @@
+substitutions:
+  device_name: screen-time
+  friendly_name: Screen Time Tracker
+
+# see https://esphome.io/components/packages.html
+packages:
+  common: !include common/base.yaml
+  scripts: !include screenTime/scripts.yaml
+  lvglGui: !include screenTime/lvglGui.yaml
+
+
+esphome:
+  platformio_options:
+    board_build.partitions: huge_app.csv
+
+# Enable logging
+logger:
+  level: DEBUG
+  logs:
+    xpt2046: INFO
+
+# TODO: remove when it's fully merged
+external_components:
+  - source: github://pr#7184
+    refresh: 10min
+    components: [lvgl]
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# ============================================================ 
+# Home Assistant components
+#
+light:
+  - name: Display Backlight
+    platform: monochromatic
+    output: backlight_pwm
+    id: backlight
+    restore_mode: ALWAYS_ON
+  - name: RGB
+    platform: rgb
+    id: led
+    red: led_red
+    green: led_green
+    blue: led_blue
+    restore_mode: ALWAYS_OFF
+
+# ============================================================ 
+# Hardware setup
+# ============================================================ 
+
+#  SPI for the display. The ESP32-2432S028R uses separate SPI buses for display and touch
+spi:
+  - id: tft
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+  - id: touch
+    clk_pin: GPIO25
+    mosi_pin: GPIO32
+    miso_pin: GPIO39
+
+# Setup a pin to control the backlight
+output:
+  - { platform: ledc, pin: GPIO21, id: backlight_pwm }
+  # Setup the pins that control the RGB LED
+  - { platform: ledc, pin: GPIO4,  id: led_red,   inverted: true }
+  - { platform: ledc, pin: GPIO16, id: led_green, inverted: true }
+  - { platform: ledc, pin: GPIO17, id: led_blue,  inverted: true }
+
+# Setup the ili9xxx platform
+# Display is used as 240x320 by default so we rotate it to 90°
+display:
+  - id: my_display
+    platform: ili9xxx
+    model: ili9341
+    spi_id: tft
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    rotation: 90
+    invert_colors: false
+    auto_clear_enabled: false #should be configured with auto_clear_enabled: false and update_interval: never, and should not have any lambda set.
+    update_interval: never
+
+# Set up the xpt2046 touch platform
+touchscreen:
+  id: my_touch
+  platform: xpt2046
+  spi_id: touch
+  cs_pin: GPIO33
+  interrupt_pin: GPIO36
+  update_interval: 50ms
+  threshold: 400
+  calibration:
+    x_min: 3900
+    x_max: 260
+    y_min: 185
+    y_max: 3742
+  transform:
+    swap_xy: false
+
+    
