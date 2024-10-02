@@ -18,6 +18,7 @@ logger:
   level: DEBUG
   logs:
     xpt2046: INFO
+    light: INFO
 
 # TODO: remove when it's fully merged
 external_components:
@@ -46,6 +47,11 @@ light:
     green: led_green
     blue: led_blue
     restore_mode: ALWAYS_OFF
+    effects:
+      - random:
+          name: Random Effect
+          transition_length: 5s
+          update_interval: 7s
 
 # ============================================================ 
 # Hardware setup

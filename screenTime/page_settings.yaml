@@ -1,0 +1,72 @@
+      id: settings_page
+      skip: true
+      widgets:        
+        - tabview:
+            id: tabview_id
+            position: top
+            size: 15%
+            bg_color: 0x233b52
+            bg_grad_color: 0x00323c
+            bg_grad_dir: VER
+            tab_style:
+              bg_color: 0x0e0e10
+              bg_grad_color: 0x334a57
+              bg_grad_dir: VER
+              items:
+                text_color: 0xFFFFFF
+            tabs:
+              - name: WiFi
+                widgets:
+                  - image:
+                      src: star_image
+              - name: Time
+                widgets:
+                  - image:
+                      src: cog_image
+              - name: Security
+                widgets:
+                  - image:
+                      src: star_image
+              - name: Theme
+                widgets:
+                  - image:
+                      src: star_image
+              - name: About
+                widgets:
+                  - image:
+                      src: star_image
+        - button: # Close
+            x: 279
+            y: 214
+            width: 37
+            height: 21
+            bg_color: 0x2195f6
+            bg_opa: 30%
+            radius: 5
+            on_release:
+              then:
+                - lvgl.page.show: main_page
+            widgets:
+              - label:
+                  align: center
+                  text: "\uF00D"  # X icon
+        
+        - button: # Apply
+            x: 232
+            y: 214
+            width: 37
+            height: 21
+            bg_color: 0x00FF00
+            bg_opa: 65%
+            radius: 5
+            on_release:
+              then:
+                - script.execute: apply_settings
+                - lvgl.widget.show: settings_applied_msg
+                - delay: 1s
+                - lvgl.widget.hide: settings_applied_msg
+
+            widgets:
+              - label:
+                  align: center
+                  text: "\uF00C"  # check icon

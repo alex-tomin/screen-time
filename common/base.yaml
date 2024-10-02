@@ -25,6 +25,6 @@ wifi:
 captive_portal:
 web_server:
 
-switch:
+button:
   - platform: factory_reset
     name: Restart with Factory Default Settings
