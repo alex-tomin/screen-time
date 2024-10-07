@@ -1,0 +1,67 @@
+id: boot_page
+# bg_color: 0x00323c
+# bg_grad_dir: NONE 
+widgets:
+  - label:
+      text: 'Screen Time'
+      x: 13
+      y: 10
+      text_color: 0xFFFFFF
+      text_font: mainTitleFont
+  - label:
+      text: !lambda "return id(description_line).c_str();"
+      x: 20
+      y: 35
+      text_color: 0xddff00
+      text_font: descriptionFont
+
+  - spinner:
+      align: center
+      width: 100
+      spin_time: 3s
+      arc_length: 120deg
+      arc_opa: 20%
+      id: spinner_id
+      arc_width: 18
+      indicator:
+        arc_color: 0x27ffd9
+        arc_width: 18
+
+  - label:
+      text: 'Connecting to WiFi and Time servers.'
+      y: 191
+      x: 0
+      width: 320
+      text_color: 0xFFFFFF
+      text_align: CENTER
+      text_font: playingForFont
+
+  - button: #settings
+      id: settings_button_boot
+      x: 296
+      y: 216
+      height: 22
+      width: 22
+      radius: 10
+      opa: 70%
+      pad_all: 0
+      border_width: 1
+      border_color: 0x3d649a
+      bg_color: 0x626262
+      on_press:
+        then:
+          - lvgl.widget.update:
+              id: settings_button_boot
+              translate_x: -2
+              translate_y: -2
+      on_release:
+        then:
+          - lvgl.widget.update:
+              id: settings_button_boot
+              translate_x: 2
+              translate_y: 2
+          - lvgl.page.show: password_page
+      widgets:
+        - image:
+            src: cog_image
+            align: center

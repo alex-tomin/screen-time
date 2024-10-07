@@ -7,7 +7,7 @@ widgets:
       text_color: 0xFFFFFF
       text_font: mainTitleFont
   - label:
-      text: "Demi's Screen Tracker"
+      text: !lambda "return id(description_line).c_str();"
       x: 20
       y: 35
       text_color: 0xddff00
@@ -196,7 +196,7 @@ widgets:
             widgets:
               - label:
                   id: playedFor_label
-                  text: 02:00:35
+                  text: 00:00:00
                   x: 0
                   y: 10
                   width: 111
@@ -261,12 +261,12 @@ widgets:
                 widgets:
                 - label:
                     id: weekRemainingLabel
-                    text: '02:00'
-                    y: 20
+                    text: '--:--'
+                    y: 18
                     width: 60
                     text_color: 0xFFFFFF
                     text_align: CENTER
-                    text_font: playingForFont              
+                    text_font: weeklyRemainingFont
         - label:
             text: 'Remai ni ng for the Week'
             x: 7
@@ -351,6 +351,5 @@ widgets:
           - lvgl.page.show: password_page
       widgets:
         - image:
-            id: settings_image
             src: cog_image
             align: center

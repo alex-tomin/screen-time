@@ -6,6 +6,7 @@ font:
   - {file: {type: gfonts, family: "Permanent Marker"}, id: remainingTimeFont,            size: 21}
   - {file: {type: gfonts, family: "Roboto"},           id: remainingTimeDescriptionFont, size: 9}
   - {file: {type: gfonts, family: "Roboto", weight: 700},  id: startButtonFont,          size: 16}
+  - {file: {type: gfonts, family: "Roboto", weight: 500},  id: weeklyRemainingFont,      size: 21}
 
 
 image:
@@ -43,7 +44,6 @@ script:
       - lvgl.label.update:
           id: bottomLabel
           text: "Press *STOP* button when you are done watching TV."
-
   - id: start_button_unchecked
     then:
       - lvgl.widget.hide: playingNow_container
@@ -57,7 +57,22 @@ script:
       - lvgl.label.update:
           id: bottomLabel
           text: "Press *START* button when you want to watch TV or play games"
-
+  - id: check_password
+    then:
+      - if:
+          condition:
+            lambda: |- 
+              return strcmp(lv_textarea_get_text(id(password_input)), id(pin_code).c_str()) == 0;
+          then:
+            - lvgl.page.show: settings_page
+            - lvgl.textarea.update:
+                id: password_input
+                text: ""
+          else:
+            - lvgl.widget.show: wrong_pin_msg
+            - lvgl.textarea.update:
+                id: password_input
+                text: ""
 
 lvgl:
   displays:
@@ -118,6 +133,7 @@ lvgl:
         bg_color: 0x009400
 
   pages:
+    - !include page_boot.yaml           
     - !include page_main.yaml
     - !include page_password.yaml
     - !include page_settings.yaml           

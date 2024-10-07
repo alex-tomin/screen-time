@@ -4,49 +4,71 @@ time:
     on_time_sync:
       then:
         - script.execute: time_update
+        - lambda: |-
+             if (!id(initialized)) {
+              id(initialize).execute();
+              id(initialized) = true;
+             }
 
-esphome:
-  on_boot:
-    priority: 600  #after hardware and sensors initialization
-    then:
-      - script.execute: initialize
+#TODO: 5min?
+preferences:
+ flash_write_interval: 5min
 
 globals:
   - { id: mario_step_count,      type: int,          restore_value: no,  initial_value: '0'    }
+  - { id: initialized,           type: bool,         restore_value: no,  initial_value: 'false'    }
 # settings
   - { id: pin_code,              type: std::string,  restore_value: yes, initial_value: '"1111"' }
   - { id: daily_minutes_limit,   type: int,          restore_value: yes, initial_value: '120'  }
   - { id: weekly_minutes_limit,  type: int,          restore_value: yes, initial_value: '900'   }
+  - { id: watching_remind_every, type: int,          restore_value: yes, initial_value: '15'   }
+  - { id: remaining_remind_1,    type: int,          restore_value: yes, initial_value: '30'   }
+  - { id: remaining_remind_2,    type: int,          restore_value: yes, initial_value: '30'   }
+
+  - { id: description_line,      type: std::string,  restore_value: yes, initial_value: '"Demi''s Screen Tracker"'}
+
 
 # Time Spent
-  - { id: daily_minutes_spent,   type: int,          restore_value: yes, initial_value: '0'    }
-  - { id: weekly_minutes_spent,  type: int,          restore_value: yes, initial_value: '0'    }
-  - { id: is_watching,           type: bool,         restore_value: yes,  initial_value: 'false' }
+  - { id: daily_minutes_spent,   type: int,          restore_value: yes, initial_value: '0' }
+  - { id: weekly_minutes_spent,  type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_day,           type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_week,          type: int,          restore_value: yes, initial_value: '0' }
-  - { id: start_time,            type: int,          restore_value: yes, initial_value: '0' }
+  # Not saving deliberately - will have to start explisitly after reboot.
+  - { id: start_time,            type: int,          restore_value: no, initial_value: '0' }
+  - { id: last_update_time,      type: int,          restore_value: no, initial_value: '0' }
+  - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
-#TODO: calc progress bars.
-# TODO: add sensor values to report to HA
+# TODO: first run WIFI setup.
+# TODO: Negative Values and %%.
+# TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
+   # remind every and wathing for - priority.
 
 interval:
   - interval: 1min  # update clock every minute
     then:
-      - script.execute: time_update 
-  # TODO: 1 min
-  - interval: 5s  # upate spent and remaining labels
+      if:
+        condition:
+          time.has_time:
+        then:        
+          - script.execute: time_update 
+  - interval: 1min  # upate spent and remaining labels, cannot be less than a minute as we are counting in minutes.
     then:
-      - script.execute: reset_time_nextday
-      - if:
-          condition:
-            lambda: 'return id(is_watching);'
-          then:
-            - script.execute: update_progress    
+      if:
+        condition:
+          lambda: 'return id(initialized);'
+        then:
+          - script.execute: reset_time_nextday
+          - if:
+              condition:
+                lambda: 'return id(is_watching);'
+              then:
+                - script.execute: calculate_remaining_time
+                - script.execute: update_progress_ui    
   - interval: 1s     # update playing time
     then:
       if:
         condition:
-          lambda: 'return id(is_watching);'
+          lambda: 'return id(initialized) && id(is_watching);'
         then:
         - lvgl.label.update:
             id: playedFor_label
@@ -66,67 +88,40 @@ interval:
 
 script:
   - id: time_update
-    then:
-      if:
-        condition:
-          time.has_time:
-        then:        
-          - lvgl.label.update:
-              id: datetime_label
-              text:
-                format: "%s %2d  %02d:%02d"
-                args:
-                  - '(new const char *[12]{"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"})[id(time_comp).now().month-1]'
-                  - 'id(time_comp).now().day_of_month'
-                  - 'id(time_comp).now().hour'
-                  - 'id(time_comp).now().minute'
-  - id: check_password
-    then:
-      - if:
-          condition:
-            lambda: |- 
-              return strcmp(lv_textarea_get_text(id(password_input)), id(pin_code).c_str()) == 0;
-          then:
-            - lvgl.page.show: settings_page
-            - lvgl.textarea.update:
-                id: password_input
-                text: ""
-          else:
-            - lvgl.widget.show: wrong_pin_msg
-            - lvgl.textarea.update:
-                id: password_input
-                text: ""
+    then:  
+      - lvgl.label.update:
+          id: datetime_label
+          text:
+            format: "%s %2d  %02d:%02d"
+            args:
+              - '(new const char *[12]{"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"})[id(time_comp).now().month-1]'
+              - 'id(time_comp).now().day_of_month'
+              - 'id(time_comp).now().hour'
+              - 'id(time_comp).now().minute'
+
 
   - id: initialize
     then:      
+      - lambda: |-  #Logging
+          ESP_LOGD("screen_time", "Initializing Screen Time. Is Watching = %d, Daily spent=%d, weekly=%d, start time = %d, now = %d",
+            id(is_watching), id(daily_minutes_spent), id(weekly_minutes_spent), id(start_time), id(time_comp).now().timestamp);
+
       - script.execute: reset_time_nextday
-      - if:
-          condition:
-            lambda: 'return id(is_watching);'
-          then:
-            - script.execute: start_button_checked
-            - script.execute: update_progress
-          else:
-            # Extract to a separaet script / consolidate with update progress?
-          - lvgl.label.update:
-              id: daily_remaining_label
-              text: !lambda |-
-                int remainingMinutes = (id(daily_minutes_limit) - id(daily_minutes_spent)/ 60);
-                return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();
-                
-          - lvgl.label.update:
-              id: weekRemainingLabel
-              text: !lambda |-
-                int remainingMinutes = (id(weekly_minutes_limit) - id(weekly_minutes_spent)/ 60);
-                return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();                
+      - script.execute: update_progress_ui
+      - lvgl.page.show: main_page
 
-          - lvgl.slider.update:
-              id: daily_remaining_bar          
-              value: !lambda 'return (id(daily_minutes_limit) - id(daily_minutes_spent)) / id(daily_minutes_limit) * 100;'
+  - id: calculate_remaining_time
+    then:
+      - lambda: |-  
+          auto now = id(time_comp).now().timestamp;
+          int elapsed = now - id(last_update_time);
+          id(daily_minutes_spent) += elapsed / 60;  // Convert to minutes
+          id(weekly_minutes_spent) += elapsed / 60;  // Convert to minutes          
+          
+          ESP_LOGD("screen_time", "Updated Spent Time. Daily Spent: %d; Weekly Spent: %d, last update: %d, now: %d", 
+              id(daily_minutes_spent) ,id(weekly_minutes_spent), id(last_update_time), now);
 
-          - lvgl.arc.update:
-              id: weekly_remaining_arc
-              value: !lambda 'return (id(weekly_minutes_limit) - id(weekly_minutes_spent)) / id(weekly_minutes_limit) * 100;'
+          id(last_update_time) = now;
 
   - id: reset_time_nextday # or week
     then:
@@ -136,6 +131,7 @@ script:
           int week_number = (day - time.day_of_week + 10) / 7;
 
           if (day != id(current_day)) {
+            ESP_LOGI("screen_time", "Resetting Day progress. Saved Day=%d, Current Day=%d", day, id(current_day));
             id(daily_minutes_spent) = 0;
             id(current_day) = day;
 
@@ -144,42 +140,38 @@ script:
           }
 
           if (week_number != id(current_week)) {
+            ESP_LOGI("screen_time", "Resetting weekly progress. Saved week=%d, Current week=%d", week_number, id(current_week));
             id(weekly_minutes_spent) = 0;
             id(current_week) = week_number;
           }
-  - id: update_progress
+  - id: update_progress_ui
     then:
       - lvgl.label.update:
           id: daily_remaining_label
           text: !lambda |-
-            int elapsed = id(time_comp).now().timestamp - id(start_time);
-            int remainingMinutes = (id(daily_minutes_limit) - id(daily_minutes_spent) - elapsed / 60);
-
+            int remainingMinutes = id(daily_minutes_limit) - id(daily_minutes_spent);
             return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();
             
       - lvgl.label.update:
           id: weekRemainingLabel
           text: !lambda |-
-            int elapsed = id(time_comp).now().timestamp - id(start_time);
-            int remainingMinutes = (id(weekly_minutes_limit) - id(weekly_minutes_spent) - elapsed / 60);
-
-            ESP_LOGD("screen_time", "Update Progress. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
+            int remainingMinutes = id(weekly_minutes_limit) - id(weekly_minutes_spent);
             return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();                
 
       - lvgl.slider.update:
           id: daily_remaining_bar          
           value: !lambda |-
-            int elapsed = id(time_comp).now().timestamp - id(start_time);
-            int remainingMinutes = (id(daily_minutes_limit) - id(daily_minutes_spent) - elapsed / 60)
-            return remainingMinutes / id(daily_minutes_limit) * 100;
+            ESP_LOGD("screen_time", "Remaining Bar. %d; limit: %d, spent: %d", 
+              (id(daily_minutes_limit) - id(daily_minutes_spent)) * 100 / id(daily_minutes_limit),
+              id(daily_minutes_limit), id(daily_minutes_spent)
+              );
 
+            return (id(daily_minutes_limit) - id(daily_minutes_spent)) * 100 / id(daily_minutes_limit);
 
       - lvgl.arc.update:
           id: weekly_remaining_arc
           value: !lambda |-
-            int elapsed = id(time_comp).now().timestamp - id(start_time);
-            int remainingMinutes = (id(weekly_minutes_limit) - id(weekly_minutes_spent) - elapsed / 60);
-            return remainingMinutes / id(weekly_minutes_limit) * 100;
+            return (id(weekly_minutes_limit) - id(weekly_minutes_spent)) * 100 / id(weekly_minutes_limit) ;
 
   - id: start_watching
     then:
@@ -188,30 +180,22 @@ script:
           effect: Random Effect      
       - lambda: |-  
           id(start_time) = id(time_comp).now().timestamp;
+          id(last_update_time) = id(start_time);
           id(is_watching) = true;
+          ESP_LOGI("screen_time", "Started Watching. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
   - id: stop_watching
     then:
       - light.turn_off:
           id: led
-      # store values to Flash only on stop, to reduce writes
       - lambda: |-  
-          auto now = id(time_comp).now().timestamp;
-          int elapsed = now - id(start_time);
-
-          id(daily_minutes_spent) += elapsed / 60;  // Convert to minutes
-          id(weekly_minutes_spent) += elapsed / 60;  // Convert to minutes
-
           id(is_watching) = false;
-          ESP_LOGD("screen_time", "Stopped Watching. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
+          ESP_LOGI("screen_time", "Stopped Watching. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
           
   - id: apply_settings
     then:
       - globals.set:
           id: daily_minutes_limit
-          value: '120'
-
-
-         
+          value: '120'        
 
 wifi:
   on_connect:
