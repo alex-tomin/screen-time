@@ -16,7 +16,8 @@ widgets:
       text_font: descriptionFont
 
   - spinner:
-      align: center
+      x: 110
+      y: 75
       width: 100
       spin_time: 3s
       arc_length: 120deg

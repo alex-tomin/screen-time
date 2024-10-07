@@ -132,6 +132,30 @@ lvgl:
         text_align: center
         bg_color: 0x009400
 
+    - id: factory_reset_msg
+      close_button: true
+      title: Factory Reset
+      x: 10
+      y: 10
+      width: 300
+      height: 220
+      radius: 4
+      bg_opa: 80%
+      bg_color: 0xda0021
+      bg_grad_color: 0xff6500
+      bg_grad_dir: VER
+      body:
+        text: Please confirm you want to perform factory reset. All the data will be lost.
+        bg_color: 0xda0021
+        bg_grad_color: 0xff6500
+        bg_grad_dir: VER
+      buttons:
+        - text: Reset
+          on_click:
+            then:
+              - lvgl.widget.hide: factory_reset_msg
+              - button.press: factory_reset_button
+
   pages:
     - !include page_boot.yaml           
     - !include page_main.yaml
