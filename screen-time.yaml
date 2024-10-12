@@ -8,11 +8,6 @@ packages:
   scripts: !include screenTime/scripts.yaml
   lvglGui: !include screenTime/lvglGui.yaml
 
-
-esphome:
-  platformio_options:
-    board_build.partitions: huge_app.csv
-
 # Enable logging
 logger:
   level: DEBUG

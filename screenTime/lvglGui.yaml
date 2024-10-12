@@ -156,6 +156,30 @@ lvgl:
               - lvgl.widget.hide: factory_reset_msg
               - button.press: factory_reset_button
 
+    - id: firmware_update_msg
+      close_button: true
+      title: "Firmware Update Available"
+      x: 10
+      y: 10
+      width: 300
+      height: 220
+      radius: 4
+      bg_opa: 80%
+      bg_color: 0x0000FF
+      bg_grad_color: 0x00FFFF
+      bg_grad_dir: VER
+      body:
+        text: "A new firmware update is available. Would you like to download and install it?"
+        bg_color: 0x0000FF
+        bg_grad_color: 0x00FFFF
+        bg_grad_dir: VER
+      buttons:
+        - text: "Download"
+          on_click:
+            then:
+              - script.execute: download_firmware
+              - lvgl.widget.hide: factory_reset_msg
+
   pages:
     - !include page_boot.yaml           
     - !include page_main.yaml

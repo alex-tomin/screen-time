@@ -9,6 +9,27 @@ time:
               id(initialize).execute();
               id(initialized) = true;
              }
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 7
+        then:
+          - lambda: |-
+             if (id(enable_updates_check)) {
+              id(check_for_updates).execute();
+             }
+
+ota:
+  - platform: esphome
+  - platform: http_request
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            args: ["x"]
+
+http_request:
+  verify_ssl: false
 
 #TODO: 5min?
 preferences:
@@ -16,7 +37,9 @@ preferences:
 
 globals:
   - { id: mario_step_count,      type: int,          restore_value: no,  initial_value: '0'    }
-  - { id: initialized,           type: bool,         restore_value: no,  initial_value: 'false'    }
+  - { id: initialized,           type: bool,         restore_value: no,  initial_value: 'false'}
+  - { id: firmware_version,      type: std::string,  restore_value: no,  initial_value: '"0.0.0"'}
+
 # settings
   - { id: pin_code,              type: std::string,  restore_value: yes, initial_value: '"1111"' }
   - { id: daily_minutes_limit,   type: int,          restore_value: yes, initial_value: '120'  }
@@ -24,9 +47,10 @@ globals:
   - { id: watching_remind_every, type: int,          restore_value: yes, initial_value: '15'   }
   - { id: remaining_remind_1,    type: int,          restore_value: yes, initial_value: '30'   }
   - { id: remaining_remind_2,    type: int,          restore_value: yes, initial_value: '30'   }
+  - { id: enable_updates_check,  type: bool,         restore_value: no,  initial_value: 'true'}
+  - { id: enable_autoupdates,    type: bool,         restore_value: no,  initial_value: 'false'}
 
   - { id: description_line,      type: std::string,  restore_value: yes, initial_value: '"Demi''s Screen Tracker"'}
-
 
 # Time Spent
   - { id: daily_minutes_spent,   type: int,          restore_value: yes, initial_value: '0' }
@@ -34,14 +58,21 @@ globals:
   - { id: current_day,           type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_week,          type: int,          restore_value: yes, initial_value: '0' }
   # Not saving deliberately - will have to start explisitly after reboot.
-  - { id: start_time,            type: int,          restore_value: no, initial_value: '0' }
-  - { id: last_update_time,      type: int,          restore_value: no, initial_value: '0' }
+  - { id: start_time,            type: long int,          restore_value: no, initial_value: '0' }
+  - { id: last_update_time,      type: long int,          restore_value: no, initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
 # TODO: first run WIFI setup.
 # TODO: Negative Values and %%.
 # TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
    # remind every and wathing for - priority.
+# TODO: cutom page for Updates - Show release notes, show progress bar. Show error?
+# TODO: on settings page add an option to install Automatically. And buttom to check for version update and install when there's a new version.
+# https://esphome.io/components/ota/http_request
+#TODO: update status bar with checking for updates message -?
+# TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
+
+
 
 interval:
   - interval: 1min  # update clock every minute
@@ -73,7 +104,7 @@ interval:
         - lvgl.label.update:
             id: playedFor_label
             text: 
-              format: "%02d:%02d:%02d"
+              format: "%02ld:%02ld:%02ld"
               args:  # convert minutes to hours, minutes and seconds
                 - (id(time_comp).now().timestamp - id(start_time)) / 60 / 60
                 - (id(time_comp).now().timestamp - id(start_time)) / 60
@@ -103,7 +134,7 @@ script:
   - id: initialize
     then:      
       - lambda: |-  #Logging
-          ESP_LOGD("screen_time", "Initializing Screen Time. Is Watching = %d, Daily spent=%d, weekly=%d, start time = %d, now = %d",
+          ESP_LOGD("screen_time", "Initializing Screen Time. Is Watching = %d, Daily spent=%d, weekly=%d, start time = %ld, now = %ld",
             id(is_watching), id(daily_minutes_spent), id(weekly_minutes_spent), id(start_time), id(time_comp).now().timestamp);
 
       - script.execute: reset_time_nextday
@@ -118,7 +149,7 @@ script:
           id(daily_minutes_spent) += elapsed / 60;  // Convert to minutes
           id(weekly_minutes_spent) += elapsed / 60;  // Convert to minutes          
           
-          ESP_LOGD("screen_time", "Updated Spent Time. Daily Spent: %d; Weekly Spent: %d, last update: %d, now: %d", 
+          ESP_LOGD("screen_time", "Updated Spent Time. Daily Spent: %d; Weekly Spent: %d, last update: %ld, now: %ld", 
               id(daily_minutes_spent) ,id(weekly_minutes_spent), id(last_update_time), now);
 
           id(last_update_time) = now;
@@ -196,6 +227,41 @@ script:
       - globals.set:
           id: daily_minutes_limit
           value: '120'        
+
+  - id: check_for_updates
+    then:
+      if:
+        condition:
+          lambda: 'return id(enable_updates_check);'
+        then:
+          - logger.log: "Checking for updates..."
+          - http_request.get:
+              url: http://iot.tomin.us/iot-firmware/screen-time/version.txt
+              capture_response: true
+              on_response:
+                then: 
+                  - lambda: |-  
+                      ESP_LOGD("screen_time", "Latest firmware version: %s; current version: %s", body.c_str(), id(firmware_version).c_str());
+                      auto firmwareVer = body;
+                      if (id(firmware_version) == firmwareVer) { 
+                        ESP_LOGD("screen_time", "No new updates.");
+                        return; 
+                      }
+
+                      if (id(enable_autoupdates)) {
+                        ESP_LOGD("screen_time", "Automatic updates enabled, installing latest version.");
+                        id(download_firmware).execute();
+                      } else {
+                        lv_obj_clear_flag(firmware_update_msg, LV_OBJ_FLAG_HIDDEN);
+                      }                      
+                      
+  - id: download_firmware
+    then:
+      - logger.log: "Downloading laest firmware..."
+      - ota.http_request.flash:
+          url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.bin
+          md5_url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.md5
+      - logger.log: "This message should be not displayed because the device reboots"
 
 wifi:
   on_connect:
