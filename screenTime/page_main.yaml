@@ -1,355 +1,406 @@
-id: main_page
-widgets:
-  - label:
-      text: 'Screen Time'
-      x: 13
-      y: 10
-      text_color: 0xFFFFFF
-      text_font: mainTitleFont
-  - label:
-      text: !lambda "return id(description_line).c_str();"
-      x: 20
-      y: 35
-      text_color: 0xddff00
-      text_font: descriptionFont
-  - obj: # top bar
-      id: top_bar
-      x: 182
-      y: 0
-      width: 137
-      height: 28
-      radius: 10
-      shadow_color: 0x8c8f91
-      shadow_width: 5
-      shadow_ofs_x: 2
-      shadow_ofs_y: 2
-      border_side: ['BOTTOM','LEFT']
-      border_width: 1
-      border_color: 0x000000
-      bg_color: 0x59646c
-      bg_grad_color: 0x201515
-      bg_grad_dir: VER
-      scrollbar_mode: 'OFF'
-      pad_all: 0
+image:
+  - {file: "screenTime/assets/mario.png",          id: mario_image,          type: RGB565, use_transparency: true, resize: 58x41 }
+  - {file: "screenTime/assets/tv.png",             id: tv_image,             type: RGB565, use_transparency: true, resize: 52x54 }
+  - {file: "screenTime/assets/greenButton_100.png",id: greenButton_image,    type: RGB565, use_transparency: true, resize: 70x70 }
+  - {file: "screenTime/assets/redButton_100.png",  id: redButton_image,      type: RGB565, use_transparency: true, resize: 70x70 }
+  - {file: "screenTime/assets/star.png",           id: star_image,           type: RGB565, use_transparency: true, resize: 20x20 }
+  - {file: "screenTime/assets/cog.png",            id: cog_image,            type: RGB565, use_transparency: true, resize: 18x18 }
+
+  - {file: "screenTime/assets/Mario/mario_frame_00.png", id: mario_frame_00, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_01.png", id: mario_frame_01, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_02.png", id: mario_frame_02, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_03.png", id: mario_frame_03, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_04.png", id: mario_frame_04, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_05.png", id: mario_frame_05, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_06.png", id: mario_frame_06, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_07.png", id: mario_frame_07, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_08.png", id: mario_frame_08, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_09.png", id: mario_frame_09, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_10.png", id: mario_frame_10, type: RGB565, use_transparency: true, resize: 43x43 }
+  - {file: "screenTime/assets/Mario/mario_frame_11.png", id: mario_frame_11, type: RGB565, use_transparency: true, resize: 43x43 }
+
+script:
+  - id: start_button_checked
+    then:
+      - lvgl.widget.hide: weeklyReport_container
+      - lvgl.widget.show: playingNow_container
+      - lvgl.image.update: 
+          id: start_button_image_id
+          src: redButton_image
+      - lvgl.label.update:
+          id: start_button_label
+          text: STOP
+      - lvgl.label.update:
+          id: bottomLabel
+          text: "Press *STOP* button when you are done watching TV."
+  - id: start_button_unchecked
+    then:
+      - lvgl.widget.hide: playingNow_container
+      - lvgl.widget.show: weeklyReport_container
+      - lvgl.image.update: 
+          id: start_button_image_id
+          src: greenButton_image
+      - lvgl.label.update:
+          id: start_button_label
+          text: START
+      - lvgl.label.update:
+          id: bottomLabel
+          text: "Press *START* button when you want to watch TV or play games"
+
+lvgl:
+  pages:
+    - id: main_page
       widgets:
-      - label:
-          id: wifi_label
-          text: "\uF1EB" # wifi signal
-          x: 10
-          y: 5
-          text_color: 0xE9E9E9
-          text_font: montserrat_14
-          hidden: true
-      - label:
-          id: datetime_label
-          text: '-- --- --:--'
-          x: 33
-          y: 4
-          text_color: 0xE9E9E9
-          text_font: montserrat_14
-  - obj: #startStop
-      x: 14
-      y: 56
-      width: 119
-      height: 165
-      styles: blue_container
-      scrollbar_mode: 'OFF'
-      widgets:
-        - obj:
-            x: 6
-            y: 7
-            width: 104
-            height: 52
+        - label:
+            text: 'Screen Time'
+            x: 13
+            y: 10
+            text_color: 0xFFFFFF
+            text_font: mainTitleFont
+        - label:
+            text: !lambda "return id(description_line).c_str();"
+            x: 20
+            y: 35
+            text_color: 0xddff00
+            text_font: descriptionFont
+        - obj: # top bar
+            id: top_bar
+            x: 182
+            y: 0
+            width: 137
+            height: 28
+            radius: 10
+            shadow_color: 0x8c8f91
+            shadow_width: 5
+            shadow_ofs_x: 2
+            shadow_ofs_y: 2
+            border_side: ['BOTTOM','LEFT']
+            border_width: 1
+            border_color: 0x000000
+            bg_color: 0x59646c
+            bg_grad_color: 0x201515
+            bg_grad_dir: VER
+            scrollbar_mode: 'OFF'
+            pad_all: 0
+            widgets:
+            - label:
+                id: wifi_label
+                text: "\uF1EB" # wifi signal
+                x: 10
+                y: 5
+                text_color: 0xE9E9E9
+                text_font: montserrat_14
+                hidden: true
+            - label:
+                id: datetime_label
+                text: '-- --- --:--'
+                x: 33
+                y: 4
+                text_color: 0xE9E9E9
+                text_font: montserrat_14
+        - obj: #startStop
+            x: 14
+            y: 56
+            width: 119
+            height: 165
             styles: blue_container
             scrollbar_mode: 'OFF'
             widgets:
-              - label:
-                  id: daily_remaining_label
-                  text: '--:--'
-                  x: 0
-                  y: 2
+              - obj:
+                  x: 6
+                  y: 7
                   width: 104
-                  height: 19
-                  text_color: 0xFFFFFF
-                  text_align: CENTER
-                  text_font: remainingTimeFont
-              - label:
-                  text: 'Remaining for Today'
-                  x: 0
-                  y: 31
-                  width: 104
-                  height: 19
-                  text_color: 0xFFFFFF
-                  text_align: CENTER
-                  text_font: remainingTimeDescriptionFont
-        - slider:
-            id: daily_remaining_bar
-            x: 11
-            y: 64
-            width: 95
-            height: 15
-            value: 50
-            bg_color: 0xffffff
-            bg_opa: 75%
-            knob:
-              bg_opa: 0%
-            indicator:
-              bg_color: 0xffb900
-            on_value:
-              then:
-                - lambda: |-
-                    auto barColor = 0x00FF00; // GREEN
-                    if (x < 30) { // RED
-                      barColor = 0xfa6400;
-                    } else if (x >= 30 && x < 60) { // YELLOW
-                      barColor = 0xffff05;
-                    }                          
-                    lv_obj_set_style_bg_color(id(daily_remaining_bar), lv_color_hex(barColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
-        - image:
-            src: greenButton_image
-            id: start_button_image_id
-            x: 24
-            y: 89
-            widgets:
-              - button:
-                  id: start_button
-                  align: center
-                  height: 55
-                  width: 55
-                  checkable: true
-                  radius: 150
-                  opa: 10%
-                  pad_all: 0
+                  height: 52
+                  styles: blue_container
+                  scrollbar_mode: 'OFF'
+                  widgets:
+                    - label:
+                        id: daily_remaining_label
+                        text: '--:--'
+                        x: 0
+                        y: 2
+                        width: 104
+                        height: 19
+                        text_color: 0xFFFFFF
+                        text_align: CENTER
+                        text_font: remainingTimeFont
+                    - label:
+                        text: 'Remaining for Today'
+                        x: 0
+                        y: 31
+                        width: 104
+                        height: 19
+                        text_color: 0xFFFFFF
+                        text_align: CENTER
+                        text_font: remainingTimeDescriptionFont
+              - slider:
+                  id: daily_remaining_bar
+                  x: 11
+                  y: 64
+                  width: 95
+                  height: 15
+                  value: 50
+                  bg_color: 0xffffff
+                  bg_opa: 75%
+                  knob:
+                    bg_opa: 0%
+                  indicator:
+                    bg_color: 0xffb900
                   on_value:
                     then:
-                      - if:
-                          condition:
-                          - lambda: 'return x;'
-                          then: #button checked
-                            - script.execute: start_button_checked
-                            - script.execute: start_watching
-                          else: 
-                            - script.execute: start_button_unchecked
-                            - script.execute: stop_watching
-                  on_press:
-                    then:
-                      - lvgl.widget.update:
-                          id: start_button_image_id
-                          translate_x: 2
-                          translate_y: 2
-                  on_release:
-                    then:
-                      - lvgl.widget.update:
-                          id: start_button_image_id
-                          translate_x: -2
-                          translate_y: -2
-                    
-              - label:
-                  id: start_button_label
-                  text_font: startButtonFont
-                  text_color: 0xFFFFFF
-                  align: center
-                  text: "START"
+                      - lambda: |-
+                          auto barColor = 0x00FF00; // GREEN
+                          if (x < 30) { // RED
+                            barColor = 0xfa6400;
+                          } else if (x >= 30 && x < 60) { // YELLOW
+                            barColor = 0xffff05;
+                          }                          
+                          lv_obj_set_style_bg_color(id(daily_remaining_bar), lv_color_hex(barColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
               - image:
-                  src: star_image
-                  x: 25
-                  y: 42
+                  src: greenButton_image
+                  id: start_button_image_id
+                  x: 24
+                  y: 89
+                  widgets:
+                    - button:
+                        id: start_button
+                        align: center
+                        height: 55
+                        width: 55
+                        checkable: true
+                        radius: 150
+                        opa: 10%
+                        pad_all: 0
+                        on_value:
+                          then:
+                            - if:
+                                condition:
+                                - lambda: 'return x;'
+                                then: #button checked
+                                  - script.execute: start_button_checked
+                                  - script.execute: start_watching
+                                else: 
+                                  - script.execute: start_button_unchecked
+                                  - script.execute: stop_watching
+                        on_press:
+                          then:
+                            - lvgl.widget.update:
+                                id: start_button_image_id
+                                translate_x: 2
+                                translate_y: 2
+                        on_release:
+                          then:
+                            - lvgl.widget.update:
+                                id: start_button_image_id
+                                translate_x: -2
+                                translate_y: -2
+                          
+                    - label:
+                        id: start_button_label
+                        text_font: startButtonFont
+                        text_color: 0xFFFFFF
+                        align: center
+                        text: "START"
+                    - image:
+                        src: star_image
+                        x: 25
+                        y: 42
 
-  - obj: #playingNow:
-      id: playingNow_container
-      x: 157
-      y: 82
-      width: 142
-      height: 138
-      border_width: 1
-      border_color: 0x002f8c
-      radius: 10
-      bg_color: 0xff8407
-      bg_grad_color: 0xffb060
-      bg_grad_dir: VER
-      pad_all: 0
-      scrollbar_mode: 'OFF'
-      hidden: true
-      widgets:
-        - label:
-            text: 'Watchi ng For'
-            x: 0
-            y: 3
+        - obj: #playingNow:
+            id: playingNow_container
+            x: 157
+            y: 82
             width: 142
-            height: 28
-            text_color: 0xFFFFFF
-            text_align: CENTER
-            text_font: playingForFont
-        - obj:
-            x: 15
-            y: 35
-            width: 111
-            height: 54
-            scrollbar_mode: 'OFF'
+            height: 138
             border_width: 1
-            border_color: 0x9a9a9a
-            bg_color: 0x5f5d5d
-            bg_grad_color: 0x0e0e0e
-            bg_grad_dir: HOR
+            border_color: 0x002f8c
+            radius: 10
+            bg_color: 0xff8407
+            bg_grad_color: 0xffb060
+            bg_grad_dir: VER
             pad_all: 0
-            radius: 60
+            scrollbar_mode: 'OFF'
+            hidden: true
             widgets:
               - label:
-                  id: playedFor_label
-                  text: 00:00:00
+                  text: 'Watchi ng For'
                   x: 0
-                  y: 10
-                  width: 111
-                  height: 24
+                  y: 3
+                  width: 142
+                  height: 28
                   text_color: 0xFFFFFF
                   text_align: CENTER
-                  text_font: remainingTimeFont
-        - animimg: #jumping mario
-            id: jumping_mario
-            x: 7
-            y: 85
-            src: [ mario_frame_00, mario_frame_01, mario_frame_02, mario_frame_03, mario_frame_04, mario_frame_05, mario_frame_06, mario_frame_07, mario_frame_08, mario_frame_09, mario_frame_10, mario_frame_11 ]
-            duration: 3000ms
-  - obj: #weeklyReport
-      id: weeklyReport_container
-      x: 157
-      y: 82
-      width: 142
-      height: 138
-      styles: blue_container
-      scrollbar_mode: 'OFF'
-      widgets:
-        - arc:
-            id: weekly_remaining_arc
-            x: 30
-            y: 9
-            width: 86
-            height: 86
-            arc_width: 12
-            value: 20
-            arc_color: 0xd6e9e4
-            start_angle: 0
-            end_angle: 360
-            indicator:
-              arc_color: 0x00963a
-              arc_width: 12
-            on_value:
-              then:   # Remaining ARC - change color
-                - lambda: |-
-                    auto arcColor = 0x00FF00; // GREEN
-                    if (x < 30) { // RED
-                      arcColor = 0xfa6400;
-                    } else if (x >= 30 && x < 60) { // YELLOW
-                      arcColor = 0xffff05;
-                    }
-                    lv_obj_set_style_arc_color(id(weekly_remaining_arc), lv_color_hex(arcColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
-            
+                  text_font: playingForFont
+              - obj:
+                  x: 15
+                  y: 35
+                  width: 111
+                  height: 54
+                  scrollbar_mode: 'OFF'
+                  border_width: 1
+                  border_color: 0x9a9a9a
+                  bg_color: 0x5f5d5d
+                  bg_grad_color: 0x0e0e0e
+                  bg_grad_dir: HOR
+                  pad_all: 0
+                  radius: 60
+                  widgets:
+                    - label:
+                        id: playedFor_label
+                        text: 00:00:00
+                        x: 0
+                        y: 10
+                        width: 111
+                        height: 24
+                        text_color: 0xFFFFFF
+                        text_align: CENTER
+                        text_font: remainingTimeFont
+              - animimg: #jumping mario
+                  id: jumping_mario
+                  x: 7
+                  y: 85
+                  src: [ mario_frame_00, mario_frame_01, mario_frame_02, mario_frame_03, mario_frame_04, mario_frame_05, mario_frame_06, mario_frame_07, mario_frame_08, mario_frame_09, mario_frame_10, mario_frame_11 ]
+                  duration: 3000ms
+        - obj: #weeklyReport
+            id: weeklyReport_container
+            x: 157
+            y: 82
+            width: 142
+            height: 138
+            styles: blue_container
+            scrollbar_mode: 'OFF'
             widgets:
-            - obj:  # inner circle 
-                x: 13
-                y: 13
-                width: 60
-                height: 60
-                border_width: 1
-                border_color: 0x9a9a9a
-                radius: 60
-                bg_color: 0x5f5d5d
-                bg_grad_color: 0x0e0e0e
-                bg_grad_dir: HOR
-                pad_all: 0
-                scrollbar_mode: 'OFF'
-                widgets:
-                - label:
-                    id: weekRemainingLabel
-                    text: '--:--'
-                    y: 18
-                    width: 60
-                    text_color: 0xFFFFFF
-                    text_align: CENTER
-                    text_font: weeklyRemainingFont
-        - label:
-            text: 'Remai ni ng for the Week'
-            x: 7
-            y: 92
-            width: 128
-            text_color: 0xFFFFFF
-            text_align: CENTER
-            text_font: playingForFont
+              - arc:
+                  id: weekly_remaining_arc
+                  x: 30
+                  y: 9
+                  width: 86
+                  height: 86
+                  arc_width: 12
+                  value: 20
+                  arc_color: 0xd6e9e4
+                  start_angle: 0
+                  end_angle: 360
+                  indicator:
+                    arc_color: 0x00963a
+                    arc_width: 12
+                  on_value:
+                    then:   # Remaining ARC - change color
+                      - lambda: |-
+                          auto arcColor = 0x00FF00; // GREEN
+                          if (x < 30) { // RED
+                            arcColor = 0xfa6400;
+                          } else if (x >= 30 && x < 60) { // YELLOW
+                            arcColor = 0xffff05;
+                          }
+                          lv_obj_set_style_arc_color(id(weekly_remaining_arc), lv_color_hex(arcColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
+                  
+                  widgets:
+                  - obj:  # inner circle 
+                      x: 13
+                      y: 13
+                      width: 60
+                      height: 60
+                      border_width: 1
+                      border_color: 0x9a9a9a
+                      radius: 60
+                      bg_color: 0x5f5d5d
+                      bg_grad_color: 0x0e0e0e
+                      bg_grad_dir: HOR
+                      pad_all: 0
+                      scrollbar_mode: 'OFF'
+                      widgets:
+                      - label:
+                          id: weekRemainingLabel
+                          text: '--:--'
+                          y: 18
+                          width: 60
+                          text_color: 0xFFFFFF
+                          text_align: CENTER
+                          text_font: weeklyRemainingFont
+              - label:
+                  text: 'Remai ni ng for the Week'
+                  x: 7
+                  y: 92
+                  width: 128
+                  text_color: 0xFFFFFF
+                  text_align: CENTER
+                  text_font: playingForFont
 
-  - image: #mario image
-      src: mario_image
-      id: mario_image_id
-      x: 257
-      y: 32
-      on_press:
-        then:
-          - lvgl.widget.update:
-              id: mario_image_id
-              translate_x: 2
-              translate_y: 2
-      on_release:
-        then:
-          - lvgl.widget.update:
-              id: mario_image_id
-              translate_x: -2
-              translate_y: -2
-  - image: #tv image
-      src: tv_image
-      id: tv_image_id
-      x: 187
-      y: 24
-      on_press:
-        then:
-          - lvgl.widget.update:
-              id: tv_image_id
-              translate_x: 2
-              translate_y: 2
-      on_release:
-        then:
-          - lvgl.widget.update:
-              id: tv_image_id
-              translate_x: -2
-              translate_y: -2
-  - label: # bottom status bar
-      id: bottomLabel
-      x: 0
-      y: 228
-      width: 300
-      height: 12
-      text_color: 0xe9e9e9
-      text_font: bottomLabelFont
-      text_align: CENTER
-      text_line_space: 1
-      bg_color: 0x606d78
-      bg_opa: 90%
-      pad_all: 0
-      text: "Press *Start* button when you want to watch TV or play games"
-  - button: #settings
-      id: settings_button
-      x: 296
-      y: 216
-      height: 22
-      width: 22
-      radius: 10
-      opa: 70%
-      pad_all: 0
-      border_width: 1
-      border_color: 0x3d649a
-      bg_color: 0x626262
-      on_press:
-        then:
-          - lvgl.widget.update:
-              id: settings_button
-              translate_x: -2
-              translate_y: -2
-      on_release:
-        then:
-          - lvgl.widget.update:
-              id: settings_button
-              translate_x: 2
-              translate_y: 2
-          - lvgl.page.show: password_page
-      widgets:
-        - image:
-            src: cog_image
-            align: center
+        - image: #mario image
+            src: mario_image
+            id: mario_image_id
+            x: 257
+            y: 32
+            on_press:
+              then:
+                - lvgl.widget.update:
+                    id: mario_image_id
+                    translate_x: 2
+                    translate_y: 2
+            on_release:
+              then:
+                - lvgl.widget.update:
+                    id: mario_image_id
+                    translate_x: -2
+                    translate_y: -2
+        - image: #tv image
+            src: tv_image
+            id: tv_image_id
+            x: 187
+            y: 24
+            on_press:
+              then:
+                - lvgl.widget.update:
+                    id: tv_image_id
+                    translate_x: 2
+                    translate_y: 2
+            on_release:
+              then:
+                - lvgl.widget.update:
+                    id: tv_image_id
+                    translate_x: -2
+                    translate_y: -2
+        - label: # bottom status bar
+            id: bottomLabel
+            x: 0
+            y: 228
+            width: 300
+            height: 12
+            text_color: 0xe9e9e9
+            text_font: bottomLabelFont
+            text_align: CENTER
+            text_line_space: 1
+            bg_color: 0x606d78
+            bg_opa: 90%
+            pad_all: 0
+            text: "Press *Start* button when you want to watch TV or play games"
+        - button: #settings
+            id: settings_button
+            x: 296
+            y: 216
+            height: 22
+            width: 22
+            radius: 10
+            opa: 70%
+            pad_all: 0
+            border_width: 1
+            border_color: 0x3d649a
+            bg_color: 0x626262
+            on_press:
+              then:
+                - lvgl.widget.update:
+                    id: settings_button
+                    translate_x: -2
+                    translate_y: -2
+            on_release:
+              then:
+                - lvgl.widget.update:
+                    id: settings_button
+                    translate_x: 2
+                    translate_y: 2
+                - lvgl.page.show: password_page
+            widgets:
+              - image:
+                  src: cog_image
+                  align: center

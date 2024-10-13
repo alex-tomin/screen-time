@@ -7,6 +7,11 @@ packages:
   common: !include common/base.yaml
   scripts: !include screenTime/scripts.yaml
   lvglGui: !include screenTime/lvglGui.yaml
+  main_page: !include screenTime/page_main.yaml
+  boot_page: !include screenTime/page_boot.yaml           
+  pass_page: !include screenTime/page_password.yaml
+  settings_page: !include screenTime/page_settings.yaml           
+
 
 # Enable logging
 logger:

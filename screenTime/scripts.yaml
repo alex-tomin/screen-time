@@ -71,7 +71,7 @@ globals:
 # https://esphome.io/components/ota/http_request
 #TODO: update status bar with checking for updates message -?
 # TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
-
+#TODO: test if not connected to HA - will it reboot every 15 min.
 
 
 interval:
@@ -222,12 +222,6 @@ script:
           id(is_watching) = false;
           ESP_LOGI("screen_time", "Stopped Watching. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
           
-  - id: apply_settings
-    then:
-      - globals.set:
-          id: daily_minutes_limit
-          value: '120'        
-
   - id: check_for_updates
     then:
       if:

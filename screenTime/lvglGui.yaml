@@ -8,72 +8,6 @@ font:
   - {file: {type: gfonts, family: "Roboto", weight: 700},  id: startButtonFont,          size: 16}
   - {file: {type: gfonts, family: "Roboto", weight: 500},  id: weeklyRemainingFont,      size: 21}
 
-
-image:
-  - {file: "screenTime/assets/mario.png",          id: mario_image,          type: RGB565, use_transparency: true, resize: 58x41 }
-  - {file: "screenTime/assets/tv.png",             id: tv_image,             type: RGB565, use_transparency: true, resize: 52x54 }
-  - {file: "screenTime/assets/star.png",           id: star_image,           type: RGB565, use_transparency: true, resize: 20x20 }
-  - {file: "screenTime/assets/greenButton_100.png",id: greenButton_image,    type: RGB565, use_transparency: true, resize: 70x70 }
-  - {file: "screenTime/assets/redButton_100.png",  id: redButton_image,      type: RGB565, use_transparency: true, resize: 70x70 }
-  - {file: "screenTime/assets/lock.png",           id: lock_image,           type: RGB565, use_transparency: true, resize: 40x50 }
-  - {file: "screenTime/assets/cog.png",            id: cog_image,            type: RGB565, use_transparency: true, resize: 18x18 }
-  - {file: "screenTime/assets/Mario/mario_frame_00.png", id: mario_frame_00, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_01.png", id: mario_frame_01, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_02.png", id: mario_frame_02, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_03.png", id: mario_frame_03, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_04.png", id: mario_frame_04, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_05.png", id: mario_frame_05, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_06.png", id: mario_frame_06, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_07.png", id: mario_frame_07, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_08.png", id: mario_frame_08, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_09.png", id: mario_frame_09, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_10.png", id: mario_frame_10, type: RGB565, use_transparency: true, resize: 43x43 }
-  - {file: "screenTime/assets/Mario/mario_frame_11.png", id: mario_frame_11, type: RGB565, use_transparency: true, resize: 43x43 }
-
-script:
-  - id: start_button_checked
-    then:
-      - lvgl.widget.hide: weeklyReport_container
-      - lvgl.widget.show: playingNow_container
-      - lvgl.image.update: 
-          id: start_button_image_id
-          src: redButton_image
-      - lvgl.label.update:
-          id: start_button_label
-          text: STOP
-      - lvgl.label.update:
-          id: bottomLabel
-          text: "Press *STOP* button when you are done watching TV."
-  - id: start_button_unchecked
-    then:
-      - lvgl.widget.hide: playingNow_container
-      - lvgl.widget.show: weeklyReport_container
-      - lvgl.image.update: 
-          id: start_button_image_id
-          src: greenButton_image
-      - lvgl.label.update:
-          id: start_button_label
-          text: START
-      - lvgl.label.update:
-          id: bottomLabel
-          text: "Press *START* button when you want to watch TV or play games"
-  - id: check_password
-    then:
-      - if:
-          condition:
-            lambda: |- 
-              return strcmp(lv_textarea_get_text(id(password_input)), id(pin_code).c_str()) == 0;
-          then:
-            - lvgl.page.show: settings_page
-            - lvgl.textarea.update:
-                id: password_input
-                text: ""
-          else:
-            - lvgl.widget.show: wrong_pin_msg
-            - lvgl.textarea.update:
-                id: password_input
-                text: ""
-
 lvgl:
   displays:
     - my_display
@@ -180,12 +114,7 @@ lvgl:
               - script.execute: download_firmware
               - lvgl.widget.hide: factory_reset_msg
 
-  pages:
-    - !include page_boot.yaml           
-    - !include page_main.yaml
-    - !include page_password.yaml
-    - !include page_settings.yaml           
-        
+  pages:       
     - id: fake_page  # needs a fake buttonmatrix, otherwise message box will not work
       skip: true
       widgets:
