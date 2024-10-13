@@ -31,12 +31,10 @@ ota:
 http_request:
   verify_ssl: false
 
-#TODO: 5min?
 preferences:
  flash_write_interval: 5min
 
 globals:
-  - { id: mario_step_count,      type: int,          restore_value: no,  initial_value: '0'    }
   - { id: initialized,           type: bool,         restore_value: no,  initial_value: 'false'}
   - { id: firmware_version,      type: std::string,  restore_value: no,  initial_value: '"0.0.0"'}
 
@@ -57,19 +55,17 @@ globals:
   - { id: weekly_minutes_spent,  type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_day,           type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_week,          type: int,          restore_value: yes, initial_value: '0' }
-  # Not saving deliberately - will have to start explisitly after reboot.
-  - { id: start_time,            type: long int,          restore_value: no, initial_value: '0' }
-  - { id: last_update_time,      type: long int,          restore_value: no, initial_value: '0' }
+# Not saving deliberately - will have to start explisitly after reboot.
+  - { id: start_time,            type: long int,     restore_value: no, initial_value: '0' }
+  - { id: last_update_time,      type: long int,     restore_value: no, initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
 # TODO: first run WIFI setup.
-# TODO: Negative Values and %%.
 # TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
    # remind every and wathing for - priority.
 # TODO: cutom page for Updates - Show release notes, show progress bar. Show error?
 # TODO: on settings page add an option to install Automatically. And buttom to check for version update and install when there's a new version.
 # https://esphome.io/components/ota/http_request
-#TODO: update status bar with checking for updates message -?
 # TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
 #TODO: test if not connected to HA - will it reboot every 15 min.
 
@@ -108,14 +104,7 @@ interval:
               args:  # convert minutes to hours, minutes and seconds
                 - (id(time_comp).now().timestamp - id(start_time)) / 60 / 60
                 - (id(time_comp).now().timestamp - id(start_time)) / 60
-                - (id(time_comp).now().timestamp - id(start_time)) % 60
-
-  # animate Mario steps
-  - interval: 100ms
-    then:
-      - lambda: |-
-          auto offset = id(mario_step_count) = (id(mario_step_count) + 2) % 80;
-          lv_obj_set_style_translate_x(id(jumping_mario), offset, (int)LV_STATE_DEFAULT|(int)LV_PART_MAIN);        
+                - (id(time_comp).now().timestamp - id(start_time)) % 60   
 
 script:
   - id: time_update
@@ -129,7 +118,6 @@ script:
               - 'id(time_comp).now().day_of_month'
               - 'id(time_comp).now().hour'
               - 'id(time_comp).now().minute'
-
 
   - id: initialize
     then:      
@@ -180,24 +168,23 @@ script:
       - lvgl.label.update:
           id: daily_remaining_label
           text: !lambda |-
-            int remainingMinutes = id(daily_minutes_limit) - id(daily_minutes_spent);
+            int remainingMinutes = std::max(0, id(daily_minutes_limit) - id(daily_minutes_spent));
             return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();
             
       - lvgl.label.update:
           id: weekRemainingLabel
           text: !lambda |-
-            int remainingMinutes = id(weekly_minutes_limit) - id(weekly_minutes_spent);
+            int remainingMinutes = std::max(0, id(weekly_minutes_limit) - id(weekly_minutes_spent));
             return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();                
 
       - lvgl.slider.update:
           id: daily_remaining_bar          
           value: !lambda |-
+            int remainingMinutes = std::max(0, id(daily_minutes_limit) - id(daily_minutes_spent));
             ESP_LOGD("screen_time", "Remaining Bar. %d; limit: %d, spent: %d", 
-              (id(daily_minutes_limit) - id(daily_minutes_spent)) * 100 / id(daily_minutes_limit),
-              id(daily_minutes_limit), id(daily_minutes_spent)
-              );
+              remainingMinutes * 100 / id(daily_minutes_limit), id(daily_minutes_limit), id(daily_minutes_spent));
 
-            return (id(daily_minutes_limit) - id(daily_minutes_spent)) * 100 / id(daily_minutes_limit);
+            return remainingMinutes * 100 / id(daily_minutes_limit);
 
       - lvgl.arc.update:
           id: weekly_remaining_arc

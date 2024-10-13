@@ -19,6 +19,17 @@ image:
   - {file: "screenTime/assets/Mario/mario_frame_10.png", id: mario_frame_10, type: RGB565, use_transparency: true, resize: 43x43 }
   - {file: "screenTime/assets/Mario/mario_frame_11.png", id: mario_frame_11, type: RGB565, use_transparency: true, resize: 43x43 }
 
+globals:
+  - { id: mario_step_count,      type: int,          restore_value: no,  initial_value: '0'    }  
+
+interval:
+  # animate Mario steps
+  - interval: 100ms
+    then:
+      - lambda: |-
+          auto offset = id(mario_step_count) = (id(mario_step_count) + 2) % 80;
+          lv_obj_set_style_translate_x(id(jumping_mario), offset, (int)LV_STATE_DEFAULT|(int)LV_PART_MAIN); 
+
 script:
   - id: start_button_checked
     then:

@@ -7,8 +7,8 @@ packages:
   common: !include common/base.yaml
   scripts: !include screenTime/scripts.yaml
   lvglGui: !include screenTime/lvglGui.yaml
+#  boot_page: !include screenTime/page_boot.yaml           
   main_page: !include screenTime/page_main.yaml
-  boot_page: !include screenTime/page_boot.yaml           
   pass_page: !include screenTime/page_password.yaml
   settings_page: !include screenTime/page_settings.yaml           
 
@@ -34,6 +34,27 @@ esp32:
 # ============================================================ 
 # Home Assistant components
 #
+
+sensor:
+  - id: daily_spent_time
+    name: "Daily Spent Time"
+    platform: template
+    device_class: "DURATION"
+    unit_of_measurement: "min"
+    state_class: "total_increasing"  #monotonically increasing positive total which periodically restarts counting from 0
+    lambda: |-
+      return id(daily_minutes_spent);
+
+  - id: weekly_spent_time
+    name: "Weekly Spent Time"
+    platform: template
+    device_class: "DURATION"
+    unit_of_measurement: "min"
+    state_class: "total_increasing"  #monotonically increasing positive total which periodically restarts counting from 0
+    lambda: |-
+      return id(weekly_minutes_spent);
+
+
 light:
   - name: Display Backlight
     platform: monochromatic

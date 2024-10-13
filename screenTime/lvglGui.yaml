@@ -115,6 +115,7 @@ lvgl:
               - lvgl.widget.hide: factory_reset_msg
 
   pages:       
+    - !include page_boot.yaml
     - id: fake_page  # needs a fake buttonmatrix, otherwise message box will not work
       skip: true
       widgets:
