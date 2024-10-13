@@ -54,6 +54,24 @@ sensor:
     lambda: |-
       return id(weekly_minutes_spent);
 
+binary_sensor:
+  - name: "Watching or Playing"
+    id: watching_or_playing
+    platform: template
+    lambda: |-
+      return id(is_watching);
+      
+  - platform: gpio
+    id: factory_reset_pin
+    pin:
+      number: GPIO0
+      mode: INPUT
+      inverted: true
+    on_multi_click:
+    - timing:
+        - ON for at least 5s
+      then:
+        - lvgl.widget.show: factory_reset_msg
 
 light:
   - name: Display Backlight
@@ -78,20 +96,8 @@ light:
 # Hardware setup
 # ============================================================ 
 
-binary_sensor:
-  - platform: gpio
-    id: factory_reset_pin
-    pin:
-      number: GPIO0
-      mode: INPUT
-      inverted: true
-    on_multi_click:
-    - timing:
-        - ON for at least 5s
-      then:
-        - lvgl.widget.show: factory_reset_msg
-        
 
+      
 
 
 #  SPI for the display. The ESP32-2432S028R uses separate SPI buses for display and touch
