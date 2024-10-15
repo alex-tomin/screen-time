@@ -355,6 +355,7 @@ lvgl:
                     id: mario_image_id
                     translate_x: -2
                     translate_y: -2
+                
         - image: #tv image
             src: tv_image
             id: tv_image_id
@@ -372,6 +373,10 @@ lvgl:
                     id: tv_image_id
                     translate_x: -2
                     translate_y: -2
+            on_click:
+              then:
+                - light.turn_off: backlight
+
         - label: # bottom status bar
             id: bottomLabel
             x: 0

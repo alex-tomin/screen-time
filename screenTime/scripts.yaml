@@ -62,10 +62,10 @@ globals:
 
 # TODO: - Dim Light When darker
 #  ○ Disable light when late and no active timer
-#  -  Enable light when touching and late
 
 # TODO env_var - Speaker - to say time's up or when 10 minutes left
-#  Settings
+
+# TODO:  Settings
 # ○ List Wifi, Select one, Enter ssid, password
 # ○ Allowed day and week time
 # ○ Reminder voice - how often / enabled/disabled
@@ -73,7 +73,6 @@ globals:
 # ○ Enable password screen,  set Password
 # Late time - to dim / turn off screen
 
-# TODO: Button to turn screen off.
 # TODO: first run WIFI setup.
 # TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
    # remind every and wathing for - priority.

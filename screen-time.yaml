@@ -1,6 +1,6 @@
 substitutions:
   device_name: screen-time
-  friendly_name: Screen Time Tracker
+  friendly_name: Screen Time
 
 # see https://esphome.io/components/packages.html
 packages:
@@ -72,13 +72,17 @@ binary_sensor:
         - ON for at least 5s
       then:
         - lvgl.widget.show: factory_reset_msg
+    on_release:
+      then:
+        - light.turn_off: backlight
 
 light:
   - name: Display Backlight
+    id: backlight
     platform: monochromatic
     output: backlight_pwm
-    id: backlight
     restore_mode: ALWAYS_ON
+
   - name: RGB
     platform: rgb
     id: led
@@ -95,10 +99,6 @@ light:
 # ============================================================ 
 # Hardware setup
 # ============================================================ 
-
-
-      
-
 
 #  SPI for the display. The ESP32-2432S028R uses separate SPI buses for display and touch
 spi:
@@ -149,5 +149,12 @@ touchscreen:
     y_max: 3742
   transform:
     swap_xy: false
+  on_touch:
+    then:
+      if:
+        condition:
+          light.is_off: backlight
+        then:
+          - light.turn_on: backlight
 
     

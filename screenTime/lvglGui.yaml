@@ -28,6 +28,7 @@ lvgl:
       bg_grad_dir: VER
       pad_all: 0
       scrollbar_mode: 'OFF'
+
   msgboxes:
     - id: wrong_pin_msg
       close_button: true
