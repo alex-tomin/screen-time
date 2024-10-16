@@ -48,8 +48,6 @@ globals:
   - { id: enable_updates_check,  type: bool,         restore_value: no,  initial_value: 'true'}
   - { id: enable_autoupdates,    type: bool,         restore_value: no,  initial_value: 'false'}
 
-  - { id: description_line,      type: std::string,  restore_value: yes, initial_value: '"Demi''s Screen Tracker"'}
-
 # Time Spent
   - { id: daily_minutes_spent,   type: int,          restore_value: yes, initial_value: '0' }
   - { id: weekly_minutes_spent,  type: int,          restore_value: yes, initial_value: '0' }
@@ -60,6 +58,7 @@ globals:
   - { id: last_update_time,      type: long int,     restore_value: no, initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
+# TODO: fix message Boxes - text and position.
 #TODO: move to github
 #TODO: can use project version??
 
@@ -79,6 +78,7 @@ globals:
 # ○ Api password for home assistant.
 # ○ Enable password screen,  set Password
 # Updates add an option to install Automatically. And buttom to check for version update and install when there's a new version.
+# show Ip Address and MAC, and example URL to open form a browser.
 
 
 interval:

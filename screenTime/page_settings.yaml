@@ -1,9 +1,27 @@
+# globals:
+#   - { id: description_line,      type: std::string,  restore_value: yes, initial_value: '"Demi''s Screen Tracker"'}
+
 script:
   - id: apply_settings
     then:
       - globals.set:
           id: daily_minutes_limit
           value: '120'     
+text:
+  - name: "Device Description"
+    id: "description_line"
+    platform: template
+    initial_value: "Alice's Time Tracker"
+    entity_category: CONFIG
+    restore_value: yes
+    optimistic: true
+    icon: mdi:rename-box-outline
+    mode: text 
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: description_label
+            text: !lambda "return x.c_str();"
 
 lvgl:
   pages:

@@ -16,7 +16,6 @@ ota:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
   fast_connect: true
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
@@ -26,6 +25,7 @@ wifi:
 
 captive_portal:
 web_server:
+  version: 3
 
 button:
   - id: factory_reset_button

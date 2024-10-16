@@ -29,11 +29,6 @@ logger:
     xpt2046: INFO
     light: INFO
 
-# TODO: remove when it's fully merged
-external_components:
-  - source: github://pr#7184
-    refresh: 10min
-    components: [lvgl]
 
 esp32:
   board: esp32dev
@@ -83,7 +78,7 @@ binary_sensor:
         - lvgl.widget.show: factory_reset_msg
     on_release:
       then:
-        - light.turn_off: backlight
+        - light.toggle: backlight
 
 light:
   - name: Display Backlight

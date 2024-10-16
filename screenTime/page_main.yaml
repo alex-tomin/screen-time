@@ -69,7 +69,8 @@ lvgl:
             text_color: 0xFFFFFF
             text_font: mainTitleFont
         - label:
-            text: !lambda "return id(description_line).c_str();"
+            id: description_label
+            text: !lambda "return id(description_line).state.c_str();"
             x: 20
             y: 35
             text_color: 0xddff00
