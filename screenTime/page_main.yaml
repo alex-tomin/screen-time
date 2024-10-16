@@ -30,6 +30,11 @@ interval:
           auto offset = id(mario_step_count) = (id(mario_step_count) + 2) % 80;
           lv_obj_set_style_translate_x(id(jumping_mario), offset, (int)LV_STATE_DEFAULT|(int)LV_PART_MAIN); 
 
+switch:
+  - platform: lvgl
+    widget: start_button
+    name: "Start/Stop Watching"
+
 script:
   - id: start_button_checked
     then:
