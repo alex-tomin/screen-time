@@ -2,6 +2,15 @@ substitutions:
   device_name: screen-time
   friendly_name: Screen Time
 
+esphome:
+  name_add_mac_suffix: true
+  project:
+    name: tomin.screen-time
+    version: "0.0.0"
+
+api:
+  reboot_timeout: 0s  # disable reboots when HA not connected
+
 # see https://esphome.io/components/packages.html
 packages:
   common: !include common/base.yaml

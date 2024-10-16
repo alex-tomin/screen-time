@@ -60,10 +60,17 @@ globals:
   - { id: last_update_time,      type: long int,     restore_value: no, initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
-# TODO: - Dim Light When darker
-#  ○ Disable light when late and no active timer
+#TODO: move to github
+#TODO: can use project version??
 
-# TODO env_var - Speaker - to say time's up or when 10 minutes left
+
+# TODO: first run WIFI setup.
+
+# TODO Speaker - to say time's up or when 10 minutes left
+# TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
+   # remind every and wathing for - priority.
+# TODO: cutom page for Updates - Show release notes, show progress bar. Show error?
+# TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
 
 # TODO:  Settings
 # ○ List Wifi, Select one, Enter ssid, password
@@ -71,16 +78,7 @@ globals:
 # ○ Reminder voice - how often / enabled/disabled
 # ○ Api password for home assistant.
 # ○ Enable password screen,  set Password
-# Late time - to dim / turn off screen
-
-# TODO: first run WIFI setup.
-# TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
-   # remind every and wathing for - priority.
-# TODO: cutom page for Updates - Show release notes, show progress bar. Show error?
-# TODO: on settings page add an option to install Automatically. And buttom to check for version update and install when there's a new version.
-# https://esphome.io/components/ota/http_request
-# TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
-#TODO: test if not connected to HA - will it reboot every 15 min.
+# Updates add an option to install Automatically. And buttom to check for version update and install when there's a new version.
 
 
 interval:
