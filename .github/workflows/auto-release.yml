@@ -9,7 +9,9 @@ on:
       - '**/RELEASE'
 
 jobs:
-  build:
+  build-and-release:
+    permissions:
+      contents: write         # write permission is required to create a github release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,10 +27,9 @@ jobs:
           #release-url: # optional, default is 
 
 
-      - uses: pipe-cd/actions-gh-release@v2.3.4
-        with:
-          release_file: '**/RELEASE'
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: release-drafter/release-drafter@v6
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.4.3
