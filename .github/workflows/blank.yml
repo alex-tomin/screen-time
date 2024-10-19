@@ -29,15 +29,11 @@ jobs:
         uses: esphome/build-action@v4.0.3
         with:
           yaml-file: screen-time.yaml
-          # Version of ESPHome to build
-          #version: # optional, default is latest
-          # Platform (OS/Arch) to use
-          #platform: # optional, default is linux/amd64
-          # Cache build directory
+          version: "2024.9.2"
+          cache: true
           #release-summary: # optional, default is 
           # Release URL
           #release-url: # optional, default is 
-          # Output complete esp-web-tools manifest.json
           complete-manifest: true
 
       - name: Upload a Build Artifact
