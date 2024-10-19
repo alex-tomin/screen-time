@@ -6,7 +6,7 @@ on:
     branches:    
       - main
     paths:
-      - '**/RELEASE'
+      - '**/relese-notes.md'   
 
 jobs:
   build-and-release:
@@ -25,11 +25,18 @@ jobs:
           #release-summary: # optional, default is 
           # Release URL
           #release-url: # optional, default is 
-
-
-      - uses: release-drafter/release-drafter@v6
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
+      # if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          prerelease: true
+          body_path: relese-notes.md
+          tag_name: v1.0.0-beta.3
+          generate_release_notes: true
+          files: |
+            screen-time-esp32/screen-time.bin
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.4.3
