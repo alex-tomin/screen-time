@@ -38,7 +38,7 @@ jobs:
           # Release URL
           #release-url: # optional, default is 
           # Output complete esp-web-tools manifest.json
-          #complete-manifest: # optional
+          complete-manifest: true
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.4.3
