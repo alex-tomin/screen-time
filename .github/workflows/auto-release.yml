@@ -23,6 +23,7 @@ jobs:
           yaml-file: screen-time.yaml
           version: "2024.9.2"
           cache: true
+          complete-manifest: true
           release-summary: Need to read from file
           release-url: https://github.com/alex-tomin/screen-time/releases/tag/v1.0.0-beta.3 
       
