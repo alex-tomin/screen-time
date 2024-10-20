@@ -72,7 +72,7 @@ lvgl:
                       border_color: 0xffffff
                       on_release:
                         then:
-                          - script.execute: check_for_updates
+                          - lambda: id(firmware_updater).update();
                       widgets:
                         - label:
                             align: center

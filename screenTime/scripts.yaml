@@ -9,27 +9,6 @@ time:
               id(initialize).execute();
               id(initialized) = true;
              }
-    on_time:
-      - seconds: 0
-        minutes: 0
-        hours: 7
-        then:
-          - lambda: |-
-             if (id(enable_updates_check)) {
-              id(check_for_updates).execute();
-             }
-
-ota:
-  - platform: esphome
-  - platform: http_request
-    on_error:
-      then:
-        - logger.log:
-            format: "OTA update error %d"
-            args: ["x"]
-
-http_request:
-  verify_ssl: false
 
 preferences:
  flash_write_interval: 5min
@@ -45,8 +24,6 @@ globals:
   - { id: watching_remind_every, type: int,          restore_value: yes, initial_value: '15'   }
   - { id: remaining_remind_1,    type: int,          restore_value: yes, initial_value: '30'   }
   - { id: remaining_remind_2,    type: int,          restore_value: yes, initial_value: '30'   }
-  - { id: enable_updates_check,  type: bool,         restore_value: no,  initial_value: 'true'}
-  - { id: enable_autoupdates,    type: bool,         restore_value: no,  initial_value: 'false'}
 
 # Time Spent
   - { id: daily_minutes_spent,   type: int,          restore_value: yes, initial_value: '0' }
@@ -61,6 +38,7 @@ globals:
 
 # TODO: fix message Boxes - text and position.
 #TODO: move to github
+# TODO bug: hard reset on release turns screen off
 
 
 # TODO: first run WIFI setup.
@@ -220,41 +198,6 @@ script:
           id(is_watching) = false;
           ESP_LOGI("screen_time", "Stopped Watching. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
           
-  - id: check_for_updates
-    then:
-      if:
-        condition:
-          lambda: 'return id(enable_updates_check);'
-        then:
-          - logger.log: "Checking for updates..."
-          - http_request.get:
-              url: http://iot.tomin.us/iot-firmware/screen-time/version.txt
-              capture_response: true
-              on_response:
-                then: 
-                  - lambda: |-  
-                      ESP_LOGD("screen_time", "Latest firmware version: %s; current version: %s", body.c_str(), id(firmware_version).c_str());
-                      auto firmwareVer = body;
-                      if (id(firmware_version) == firmwareVer) { 
-                        ESP_LOGD("screen_time", "No new updates.");
-                        return; 
-                      }
-
-                      if (id(enable_autoupdates)) {
-                        ESP_LOGD("screen_time", "Automatic updates enabled, installing latest version.");
-                        id(download_firmware).execute();
-                      } else {
-                        lv_obj_clear_flag(firmware_update_msg, LV_OBJ_FLAG_HIDDEN);
-                      }                      
-                      
-  - id: download_firmware
-    then:
-      - logger.log: "Downloading laest firmware..."
-      - ota.http_request.flash:
-          url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.bin
-          md5_url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.md5
-      - logger.log: "This message should be not displayed because the device reboots"
-
 wifi:
   on_connect:
     - lvgl.widget.show: wifi_label

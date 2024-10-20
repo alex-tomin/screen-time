@@ -1,0 +1,65 @@
+globals:
+  - { id: update_mode,              type: std::string,  restore_value: yes, initial_value: '"AUTO_UPDATE"' }  # AUTO_UPDATE, PROMPT, DISABLED 
+
+http_request:
+  verify_ssl: false
+
+ota:
+  - platform: http_request
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            args: ["x"]
+
+#TODO: update insturctions: 1) update version in file;   2) Push  3) Mark release as latest, update text.  (auto updater only checks for latest)
+
+update:
+  - name: $friendly_name Firmware
+    id: firmware_updater
+    platform: http_request
+    source: https://github.com/alex-tomin/screen-time/releases/latest/download/manifest.json
+    #device_class: update
+    #icon: mdi:cloud-upload
+    # on_update_available:
+    #   then:
+    #     - logger.log: 
+    #         format: "before update: %s %s %s %s"
+    #         args: 
+    #           - x.current_version
+    #           - x.latest_version
+    #           - x.title
+    #           - x.summary
+
+        # if:
+        #   condition:
+        #     lambda: 'return id(enable_updates_check);'
+        #   then:
+        #     - logger.log: "Checking for updates..."
+            # - http_request.get:
+            #     url: http://iot.tomin.us/iot-firmware/screen-time/version.txt
+            #     capture_response: true
+            #     on_response:
+            #       then: 
+            #         - lambda: |-  
+            #             ESP_LOGD("screen_time", "Latest firmware version: %s; current version: %s", body.c_str(), id(firmware_version).c_str());
+            #             auto firmwareVer = body;
+            #             if (id(firmware_version) == firmwareVer) { 
+            #               ESP_LOGD("screen_time", "No new updates.");
+            #               return; 
+            #             }
+
+            #             if (id(enable_autoupdates)) {
+            #               ESP_LOGD("screen_time", "Automatic updates enabled, installing latest version.");
+            #               id(download_firmware).execute();
+            #             } else {
+            #               lv_obj_clear_flag(firmware_update_msg, LV_OBJ_FLAG_HIDDEN);
+            #             }                      
+                        
+  # - id: download_firmware
+  #   then:
+  #     - logger.log: "Downloading laest firmware..."
+  #     - ota.http_request.flash:
+  #         url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.bin
+  #         md5_url: http://iot.tomin.us/iot-firmware/screen-time/firmware.ota.md5
+  #     - logger.log: "This message should be not displayed because the device reboots"

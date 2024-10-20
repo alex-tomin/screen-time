@@ -112,7 +112,7 @@ lvgl:
         - text: "Download"
           on_click:
             then:
-              - script.execute: download_firmware
+              - update.perform: firmware_updater
               - lvgl.widget.hide: factory_reset_msg
 
   pages:       

@@ -16,16 +16,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read Release Summary
+        id: read_release_summary
+        run: |
+          RELEASE_SUMMARY=
+          echo "RELEASE_SUMMARY=$(cat release-notes.md)" >> $GITHUB_ENV
+
       - name: ESPHome Builder
         id: esphome-build
         uses: esphome/build-action@v4.0.3
         with:
           yaml-file: screen-time.yaml
-          version: "2024.9.2"
+          version: "2024.9.2"  # higher version has a bug with LVGL coordinates.
           cache: true
-          complete-manifest: true
-          release-summary: Need to read from file
-          release-url: https://github.com/alex-tomin/screen-time/releases/tag/v1.0.0-beta.3 
+          complete-manifest: true  # needed for auto updater
+          release-summary: ${{ env.RELEASE_SUMMARY }}
+          release-url: https://github.com/alex-tomin/screen-time/releases/latest
       
       - run : echo "The project version is ${{ steps.esphome-build.outputs.project-version }}"
 
