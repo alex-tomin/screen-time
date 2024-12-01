@@ -36,27 +36,37 @@ globals:
   - { id: last_update_time,      type: long int,     restore_value: no, initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
-# TODO: fix message Boxes - text and position.
-#TODO: move to github
+#UI Improvements
+   #TODO: While Connecting to WIFI  - Show log.  And Add message if cannot connect - try anotehr wifi 
+   # TODO: click on remainig label - cycle played today.
+   # TODO: fix message Boxes - text and position.
+
+# TODO: remote logging
+
+# TODO: for update compile error - maybe use state change? check https://github.com/esphome/issues/issues/6205
 # TODO bug: hard reset on release turns screen off
-
-
+# TODO: preserve passwords on OTA.
 # TODO: first run WIFI setup.
 
 # TODO Speaker - to say time's up or when 10 minutes left
 # TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
    # remind every and wathing for - priority.
-# TODO: cutom page for Updates - Show release notes, show progress bar. Show error?
+
+# TODO: custom page for Updates - Show release notes, show progress bar. Show error?
 # TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
 
+
+
 # TODO:  Settings
+#  configure time zone
 # ○ List Wifi, Select one, Enter ssid, password
 # ○ Allowed day and week time
 # ○ Reminder voice - how often / enabled/disabled
 # ○ Api password for home assistant.
 # ○ Enable password screen,  set Password
 # Updates add an option to install Automatically. And buttom to check for version update and install when there's a new version.
-# show Ip Address and MAC, and example URL to open form a browser.
+# show Ip Address and MAC, and example URL to open from a browser.  Generate bar code???
+# about window - add attribution to the icons.
 
 
 interval:

@@ -12,15 +12,12 @@ ota:
             format: "OTA update error %d"
             args: ["x"]
 
-#TODO: update insturctions: 1) update version in file;   2) Push  3) Mark release as latest, update text.  (auto updater only checks for latest)
-
 update:
   - name: $friendly_name Firmware
     id: firmware_updater
     platform: http_request
     source: https://github.com/alex-tomin/screen-time/releases/latest/download/manifest.json
-    #device_class: update
-    #icon: mdi:cloud-upload
+    icon: mdi:cloud-upload
     # on_update_available:
     #   then:
     #     - logger.log: 

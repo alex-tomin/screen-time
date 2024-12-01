@@ -6,8 +6,6 @@ IoT project to track kid's screen time
 
 ## To Release a Version
 
-1) update version in file;   2) Push  3) Mark release as latest, update text.  (auto updater only checks for latest)
-
 1. Update version in `screen-time.yaml` , `esphome -> project -> version`section. e.g.
 
    ```diff
@@ -20,7 +18,7 @@ IoT project to track kid's screen time
 3. Push your changes, validate build on GitHub Actions.
 4. Update Release
 
-   1. If build is successful a release wil b ecreated automtically with necessary assets - validate manifest and firmware files are attached
+   1. If build is successful a release will be created automatically with necessary assets - validate manifest and firmware files are attached
    2. Review Release description.
    3. Mark Release as `latest` if you want the updated to automatically pick it up.
 

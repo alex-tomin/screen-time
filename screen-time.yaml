@@ -16,11 +16,17 @@ packages:
   common: !include common/base.yaml
   scripts: !include screenTime/scripts.yaml
   lvglGui: !include screenTime/lvglGui.yaml
-#  boot_page: !include screenTime/page_boot.yaml           
   main_page: !include screenTime/page_main.yaml
   pass_page: !include screenTime/page_password.yaml
   settings_page: !include screenTime/page_settings.yaml           
   updates: !include screenTime/updates.yaml
+
+external_components:
+  - source:
+      url: https://github.com/dwmw2/esphome_syslog.git
+      type: git
+      ref: esp-ipv6-support
+    components: [syslog]
 
 
 # Enable logging
@@ -28,13 +34,16 @@ logger:
   level: DEBUG
   logs:
     xpt2046: INFO
-    light: INFO
+    #light: INFO
 
+syslog:
+    ip_address: "192.168.11.6"
+    port: 5514
 
 esp32:
   board: esp32dev
   framework:
-    type: arduino
+    type: esp-idf
 
 # ============================================================ 
 # Home Assistant components
@@ -133,7 +142,7 @@ display:
     spi_id: tft
     cs_pin: GPIO15
     dc_pin: GPIO2
-    rotation: 90
+    rotation: 270
     invert_colors: false
     auto_clear_enabled: false #should be configured with auto_clear_enabled: false and update_interval: never, and should not have any lambda set.
     update_interval: never
@@ -148,18 +157,17 @@ touchscreen:
   update_interval: 50ms
   threshold: 400
   calibration:
-    x_min: 3900
-    x_max: 260
+    x_max: 3900
+    x_min: 260
     y_min: 185
     y_max: 3742
   transform:
-    swap_xy: false
+    mirror_x: true
+    mirror_y: true
+    swap_xy: true
   on_touch:
-    then:
-      if:
-        condition:
-          light.is_off: backlight
-        then:
-          - light.turn_on: backlight
-
-    
+    if:
+      condition:
+        light.is_off: backlight
+      then:
+        - light.turn_on: backlight
