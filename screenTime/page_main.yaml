@@ -150,7 +150,7 @@ lvgl:
                         text_color: 0xFFFFFF
                         text_align: CENTER
                         text_font: remainingTimeDescriptionFont
-              - slider:
+              - bar:
                   id: daily_remaining_bar
                   x: 11
                   y: 64
@@ -159,8 +159,6 @@ lvgl:
                   value: 50
                   bg_color: 0xffffff
                   bg_opa: 75%
-                  knob:
-                    bg_opa: 0%
                   indicator:
                     bg_color: 0xffb900
                   on_value:
