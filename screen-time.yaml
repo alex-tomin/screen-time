@@ -5,8 +5,8 @@ substitutions:
 esphome:
   name_add_mac_suffix: true
   project:
-    name: tomin.screen-time
-    version: "1.0.0-beta.5"
+    name: Tomin IoT.Screen Time
+    version: "1.0.0-beta.6"
 
 api:
   reboot_timeout: 0s  # disable reboots when HA not connected
