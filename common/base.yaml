@@ -30,7 +30,19 @@ web_server:
 button:
   - id: factory_reset_button
     platform: factory_reset
-    name: Restart with Factory Default Settings
+    name: Factory Reset
     on_press:
       then:
         - logger.log: "Factory Reset Called"
+
+  - platform: restart
+    name: Restart
+
+  - platform: safe_mode
+    id: button_safe_mode
+    name: Safe Mode Boot
+
+text_sensor:
+  - platform: version
+    entity_category: DIAGNOSTIC
+    name: "ESPHome Version"

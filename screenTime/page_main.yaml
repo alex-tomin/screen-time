@@ -33,7 +33,7 @@ interval:
 switch:
   - platform: lvgl
     widget: start_button
-    name: "Start/Stop Watching"
+    name: "Watch or Play"
 
 script:
   - id: start_button_checked
