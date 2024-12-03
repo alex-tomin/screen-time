@@ -38,10 +38,9 @@ globals:
 
 #UI Improvements
    #TODO: While Connecting to WIFI  - Show log.  And Add message if cannot connect - try anotehr wifi 
-   # TODO: click on remainig label - cycle played today.
+   # TODO: click on remaining label - cycle played today.
+   # TODO: same for Played this week.
    # TODO: fix message Boxes - text and position.
-
-# TODO: remote logging
 
 # TODO: for update compile error - maybe use state change? check https://github.com/esphome/issues/issues/6205
 # TODO bug: hard reset on release turns screen off

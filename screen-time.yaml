@@ -35,7 +35,7 @@ logger:
   level: DEBUG
   logs:
     xpt2046: INFO
-    #light: INFO
+    light: INFO
 
 syslog:
     ip_address: "192.168.11.6"
@@ -55,6 +55,7 @@ text_sensor:
     entity_category: DIAGNOSTIC
     name: $friendly_name Version
     lambda: return {"$version"};
+    update_interval: 15min
 
 sensor:
   - id: daily_spent_time
@@ -63,6 +64,7 @@ sensor:
     device_class: "DURATION"
     unit_of_measurement: "min"
     state_class: "total_increasing"  #monotonically increasing positive total which periodically restarts counting from 0
+    update_interval: 5min
     lambda: |-
       return id(daily_minutes_spent);
 
@@ -72,8 +74,9 @@ sensor:
     device_class: "DURATION"
     unit_of_measurement: "h"
     state_class: "total_increasing"  #monotonically increasing positive total which periodically restarts counting from 0
+    update_interval: 5min
     lambda: |-
-      return id(weekly_minutes_spent)/60;
+      return id(weekly_minutes_spent)/(float)60;
 
 binary_sensor:      
   - platform: gpio
