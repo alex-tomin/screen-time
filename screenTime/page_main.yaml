@@ -177,7 +177,6 @@ lvgl:
                           }                          
                           lv_obj_set_style_bg_color(id(daily_remaining_bar), lv_color_hex(barColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
                           lv_obj_add_style(daily_remaining_container, style, LV_PART_MAIN);
-                          // lv_obj_add_style(start_stop_container, style, LV_PART_MAIN);
               - image:
                   src: greenButton_image
                   id: start_button_image_id
@@ -293,6 +292,7 @@ lvgl:
             scrollbar_mode: 'OFF'
             widgets:
               - arc:
+                  adjustable: false
                   id: weekly_remaining_arc
                   x: 30
                   y: 9
@@ -310,27 +310,27 @@ lvgl:
                     then:   # Remaining ARC - change color
                       - lambda: |-
                           auto arcColor = 0x00FF00; // GREEN
+                          auto style = dark_container;
                           if (x < 30) { // RED
                             arcColor = 0xfa6400;
+                            style = red_container;
                           } else if (x >= 30 && x < 60) { // YELLOW
                             arcColor = 0xffff05;
+                            style = yellow_container;
                           }
                           lv_obj_set_style_arc_color(id(weekly_remaining_arc), lv_color_hex(arcColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
-                  
+                          lv_obj_add_style(weekly_remaining_circle, style, LV_PART_MAIN);
+
                   widgets:
                   - obj:  # inner circle 
                       x: 13
                       y: 13
+                      id: weekly_remaining_circle
+                      styles: dark_container
+                      scrollbar_mode: 'OFF'
                       width: 60
                       height: 60
-                      border_width: 1
-                      border_color: 0x9a9a9a
                       radius: 60
-                      bg_color: 0x5f5d5d
-                      bg_grad_color: 0x0e0e0e
-                      bg_grad_dir: HOR
-                      pad_all: 0
-                      scrollbar_mode: 'OFF'
                       widgets:
                       - label:
                           id: weekRemainingLabel

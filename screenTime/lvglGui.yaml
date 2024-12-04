@@ -46,6 +46,15 @@ lvgl:
       bg_grad_dir: VER
       pad_all: 0
       scrollbar_mode: 'OFF'
+    - id: dark_container
+      radius: 10
+      border_width: 1
+      border_color: 0x9a9a9a
+      bg_color: 0x5f5d5d
+      bg_grad_color: 0x0e0e0e
+      bg_grad_dir: HOR
+      pad_all: 0
+      scrollbar_mode: 'OFF'
 
   msgboxes:
     - id: wrong_pin_msg
