@@ -38,8 +38,7 @@ globals:
 
 #UI Improvements
    #TODO: While Connecting to WIFI  - Show log.  And Add message if cannot connect - try anotehr wifi 
-   # TODO: click on remaining label - cycle played today.
-   # TODO: same for Played this week.
+   # TODO: click on remaining week - cycle played this week???
    # TODO: fix message Boxes - text and position.
 
 # TODO: for update compile error - maybe use state change? check https://github.com/esphome/issues/issues/6205
@@ -168,6 +167,11 @@ script:
           text: !lambda |-
             int remainingMinutes = std::max(0, id(daily_minutes_limit) - id(daily_minutes_spent));
             return str_sprintf("%02d:%02d", remainingMinutes / 60, remainingMinutes % 60).c_str();
+
+      - lvgl.label.update:
+          id: daily_played_label
+          text: !lambda |-
+            return str_sprintf("%02d:%02d", id(daily_minutes_spent) / 60, id(daily_minutes_spent) % 60).c_str();
             
       - lvgl.label.update:
           id: weekRemainingLabel

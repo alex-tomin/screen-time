@@ -132,6 +132,10 @@ lvgl:
                   height: 52
                   styles: blue_container
                   scrollbar_mode: 'OFF'
+                  on_click:
+                    then:
+                      - lvgl.widget.show: daily_played_container
+                      - lvgl.widget.hide: daily_remaining_container
                   widgets:
                     - label:
                         id: daily_remaining_label
@@ -145,6 +149,39 @@ lvgl:
                         text_font: remainingTimeFont
                     - label:
                         text: 'Remaining for Today'
+                        x: 0
+                        y: 31
+                        width: 104
+                        height: 19
+                        text_color: 0xFFFFFF
+                        text_align: CENTER
+                        text_font: remainingTimeDescriptionFont
+              - obj:
+                  id: daily_played_container
+                  hidden: true
+                  x: 6
+                  y: 7
+                  width: 104
+                  height: 52
+                  styles: blue_container
+                  scrollbar_mode: 'OFF'
+                  on_click:
+                    then:
+                      - lvgl.widget.show: daily_remaining_container
+                      - lvgl.widget.hide: daily_played_container
+                  widgets:
+                    - label:
+                        id: daily_played_label
+                        text: '--:--'
+                        x: 0
+                        y: 2
+                        width: 104
+                        height: 19
+                        text_color: 0xFFFFFF
+                        text_align: CENTER
+                        text_font: remainingTimeFont
+                    - label:
+                        text: 'Time Spent Today'
                         x: 0
                         y: 31
                         width: 104
@@ -177,6 +214,7 @@ lvgl:
                           }                          
                           lv_obj_set_style_bg_color(id(daily_remaining_bar), lv_color_hex(barColor), (int)LV_STATE_DEFAULT|(int)LV_PART_INDICATOR);
                           lv_obj_add_style(daily_remaining_container, style, LV_PART_MAIN);
+                          lv_obj_add_style(daily_played_container, style, LV_PART_MAIN);
               - image:
                   src: greenButton_image
                   id: start_button_image_id
