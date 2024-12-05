@@ -90,7 +90,7 @@ binary_sensor:
         - ON for at least 5s
       then:
         - lvgl.widget.show: factory_reset_msg
-    on_release:
+    on_click:
       then:
         - light.toggle: backlight
 

@@ -31,18 +31,15 @@ globals:
   - { id: current_day,           type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_week,          type: int,          restore_value: yes, initial_value: '0' }
 
-# Not saving deliberately - will have to start explisitly after reboot.
-  - { id: start_time,            type: long int,     restore_value: no, initial_value: '0' }
-  - { id: last_update_time,      type: long int,     restore_value: no, initial_value: '0' }
+# Not saving deliberately - will have to start explicitly after reboot.
+  - { id: start_time,            type: long int,     restore_value: no,  initial_value: '0' }
+  - { id: last_update_time,      type: long int,     restore_value: no,  initial_value: '0' }
   - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
 
 #UI Improvements
    #TODO: While Connecting to WIFI  - Show log.  And Add message if cannot connect - try anotehr wifi 
-   # TODO: click on remaining week - cycle played this week???
-   # TODO: fix message Boxes - text and position.
 
 # TODO: for update compile error - maybe use state change? check https://github.com/esphome/issues/issues/6205
-# TODO bug: hard reset on release turns screen off
 # TODO: preserve passwords on OTA.
 # TODO: first run WIFI setup.
 
@@ -51,11 +48,13 @@ globals:
    # remind every and wathing for - priority.
 
 # TODO: custom page for Updates - Show release notes, show progress bar. Show error?
-# TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
+  # TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
 
 
 
 # TODO:  Settings
+# TODO: QR code for settings
+# TODO: penalty hour
 #  configure time zone
 # ○ List Wifi, Select one, Enter ssid, password
 # ○ Allowed day and week time

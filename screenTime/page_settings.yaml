@@ -70,13 +70,28 @@ lvgl:
                       radius: 16
                       border_width: 2
                       border_color: 0xffffff
-                      on_release:
+                      on_click:
                         then:
                           - lambda: id(firmware_updater).update();
                       widgets:
                         - label:
                             align: center
                             text: 'Check For Updates'
+                            text_color: 0xFFFFFF
+                            text_font: startButtonFont
+                  - button: # Factory Reset
+                      height: 34
+                      bg_opa: 0%
+                      radius: 16
+                      border_width: 2
+                      border_color: 0xffffff
+                      on_click:
+                        then:
+                        - lvgl.widget.show: factory_reset_msg
+                      widgets:
+                        - label:
+                            align: center
+                            text: 'Factory Reset'
                             text_color: 0xFFFFFF
                             text_font: startButtonFont
         - button: # Close
