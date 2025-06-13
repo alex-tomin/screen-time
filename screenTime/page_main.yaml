@@ -32,6 +32,7 @@ interval:
 
 switch:
   - platform: lvgl
+    id: start_watching_switch
     widget: start_button
     name: "Watch or Play"
 

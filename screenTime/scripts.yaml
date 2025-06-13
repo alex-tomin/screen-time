@@ -11,7 +11,7 @@ time:
              }
 
 preferences:
- flash_write_interval: 5min
+  flash_write_interval: 2min
 
 globals:
   - { id: initialized,           type: bool,         restore_value: no,  initial_value: 'false'}
@@ -31,10 +31,10 @@ globals:
   - { id: current_day,           type: int,          restore_value: yes, initial_value: '0' }
   - { id: current_week,          type: int,          restore_value: yes, initial_value: '0' }
 
-# Not saving deliberately - will have to start explicitly after reboot.
-  - { id: start_time,            type: long int,     restore_value: no,  initial_value: '0' }
-  - { id: last_update_time,      type: long int,     restore_value: no,  initial_value: '0' }
-  - { id: is_watching,           type: bool,         restore_value: no,  initial_value: 'false' }
+# As device can reboot on it's own occasionally - adding saving state.
+  - { id: start_time,            type: long int,     restore_value: yes,  initial_value: '0' }
+  - { id: last_update_time,      type: long int,     restore_value: yes,  initial_value: '0' }
+  - { id: is_watching,           type: bool,         restore_value: yes,  initial_value: 'false' }
 
 #UI Improvements
    #TODO: While Connecting to WIFI  - Show log.  And Add message if cannot connect - try anotehr wifi 
@@ -45,12 +45,12 @@ globals:
 
 # TODO Speaker - to say time's up or when 10 minutes left
 # TODO: reminder popup after 30 min of watching, when 30 min left for the day, when 15 min left for the day and when time is up.
-   # remind every and wathing for - priority.
+   # remind every and watching for - priority.
 
 # TODO: custom page for Updates - Show release notes, show progress bar. Show error?
   # TODO: add On Begin / On progress / Of error for firmware updates https://esphome.io/components/ota/
 
-
+#TODO:             id(is_watching) = false; - use switch instead to have UI synced
 
 # TODO:  Settings
 # TODO: QR code for settings
@@ -124,6 +124,11 @@ script:
       - script.execute: reset_time_nextday
       - script.execute: update_progress_ui
       - lvgl.page.show: main_page
+      - lambda: |-
+          if (id(is_watching)) {
+            id(start_watching_switch).turn_on();
+            ESP_LOGI("screen_time", "Resuming Watching after restart. Daily spent=%d, weekly=%d", id(daily_minutes_spent), id(weekly_minutes_spent));
+          }
 
   - id: calculate_remaining_time
     then:
