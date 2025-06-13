@@ -24,7 +24,7 @@ jobs:
 
       - name: ESPHome Builder
         id: esphome-build
-        uses: esphome/build-action@v4
+        uses: esphome/build-action@v7
         with:
           yaml-file: screen-time.yaml
           version: "2024.11.2"
