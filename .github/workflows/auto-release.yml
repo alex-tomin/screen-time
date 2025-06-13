@@ -24,10 +24,10 @@ jobs:
 
       - name: ESPHome Builder
         id: esphome-build
-        uses: esphome/build-action@v4.0.3
+        uses: esphome/build-action@v4
         with:
           yaml-file: screen-time.yaml
-          version: "2024.9.2"  # higher version has a bug with LVGL coordinates.
+          version: "2024.11.2"
           cache: true
           complete-manifest: true  # needed for auto updater
           release-summary: ${{ env.RELEASE_SUMMARY }}
