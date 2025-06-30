@@ -19,8 +19,9 @@ IoT project to track kid's screen time
 4. Update Release
 
    1. If build is successful a release will be created automatically with necessary assets - validate manifest and firmware files are attached
-   2. Review Release description.
-   3. Mark Release as `latest` if you want the updated to automatically pick it up.
+   2. Git tags are automatically added (extracted from project version above)
+   3. Review Release description.
+   4. Mark Release as `latest` if you want the updated to automatically pick it up.
 
 # License
 
