@@ -1,7 +1,8 @@
 substitutions:
   device_name: screen-time
   friendly_name: Screen Time
-  version: "1.0.0-beta.8"
+  version: "1.0.0-beta.9"
+  # Added Debug Info.
 
 esphome:
   name_add_mac_suffix: true
@@ -50,12 +51,22 @@ esp32:
 # Home Assistant components
 #
 
+# Debug component for diagnostic information
+debug:
+  update_interval: 5s
+
 text_sensor:
   - platform: template
     entity_category: DIAGNOSTIC
     name: $friendly_name Version
     lambda: return {"$version"};
     update_interval: 15min
+
+  # Debug sensors for reset and wake reasons
+  - platform: debug
+    reset_reason:
+      name: Reset Reason
+      entity_category: DIAGNOSTIC
 
 sensor:
   - id: daily_spent_time
